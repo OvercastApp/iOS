@@ -11,8 +11,10 @@
 
 @interface OCNForumsViewController : UITableViewController
 
-@property (weak, nonatomic) IBOutlet UIRefreshControl *refreshWheel;
-@property (strong, nonatomic) OCNTopics *forumTopics;
+@property (nonatomic,weak) IBOutlet UIRefreshControl *refreshWheel;
+@property (nonatomic,strong) OCNTopics *forumTopics;
+@property (nonatomic,getter = isRefreshing) BOOL refreshing;
+@property (nonatomic,strong) NSMutableDictionary *authorImages;
 
 - (IBAction)refreshContent;
 

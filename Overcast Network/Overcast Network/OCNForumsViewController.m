@@ -7,6 +7,7 @@
 //
 
 #import "OCNForumsViewController.h"
+#import "UIImage+RoundedCorner.h"
 
 @interface OCNForumsViewController ()
 
@@ -14,9 +15,32 @@
 
 @implementation OCNForumsViewController
 
-- (IBAction)refreshContent {
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    // Uncomment the following line to preserve selection between presentations.
+    // self.clearsSelectionOnViewWillAppear = NO;
+ 
+    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;]
+    
+    self.forumTopics = [[OCNTopics alloc] init];
+    self.authorImages = [[NSMutableDictionary alloc] init];
+    [self.refreshWheel beginRefreshing];
     [self refreshForumContent];
-    [self.refreshWheel endRefreshing];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateUI:)
+                                                 name:@"Update"
+                                               object:nil];
+    self.refreshing = false;
+}
+
+- (IBAction)refreshContent {
+    if (!self.isRefreshing) {
+        [self refreshForumContent];
+        self.refreshing = true;
+    }
 }
 
 - (void)refreshForumContent
@@ -33,18 +57,32 @@
     return self;
 }
 
-- (void)viewDidLoad
+- (void) updateUI:(NSNotification *)notification
 {
-    [super viewDidLoad];
-
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;]
-    self.forumTopics = [[OCNTopics alloc] init];
-    [self refreshForumContent];
-    NSLog(@"A total of %u topics",[self.forumTopics.topics count]);
+    if ([[notification name] isEqualToString:@"Update"])
+    {
+        NSLog (@"Updating UI");
+        NSLog(@"A total of %lu topics",(unsigned long)[self.forumTopics.topics count]);
+        for (int index = (int)[self.forumTopics.topics count] - 1; index >= 10; index --) {
+            NSString *thisAuthor = [[self.forumTopics.topics objectAtIndex:index] author];
+            if (![self.authorImages objectForKey:thisAuthor]) {
+                dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+                dispatch_async(queue, ^(void) {
+                    NSString *thisNewAuthor = [[self.forumTopics.topics objectAtIndex:index] author];
+                    NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://avatar.oc.tc/%@/48.png",thisNewAuthor]]];
+                    UIImage* image = [[UIImage alloc] initWithData:imageData];
+                    if (image) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [self.authorImages setObject:imageData forKey:thisNewAuthor];
+                        });
+                    }
+                });
+            }
+        }
+        [self.tableView reloadData];
+        self.refreshing = false;
+        [self.refreshWheel endRefreshing];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -66,11 +104,35 @@
     static NSString *CellIdentifier = @"Forum Topic Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
+    cell.tag = indexPath.row;
+    cell.imageView.image = nil;
     cell.textLabel.text = [self getTitleForRow:indexPath.row];
     cell.detailTextLabel.text = [self getAuthorForRow:indexPath.row];
     cell.detailTextLabel.textColor = [self getColorForRow:indexPath.row];
-    cell.imageView.image = [self getImageForRow:indexPath.row];
     
+    NSString *thisAuthor = [[self.forumTopics.topics objectAtIndex:indexPath.row] author];
+    if ([self.authorImages objectForKey:thisAuthor]) {
+        cell.imageView.image = [[[UIImage alloc]initWithData:[self.authorImages objectForKey:thisAuthor]] imageWithRoundedCornersRadius:5];
+    }
+    else {
+        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+        dispatch_async(queue, ^(void) {
+            if (cell.tag == indexPath.row) {
+                NSString *thisNewAuthor = [[self.forumTopics.topics objectAtIndex:indexPath.row] author];
+                NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://avatar.oc.tc/%@/48.png",thisNewAuthor]]];
+                UIImage* image = [[UIImage alloc] initWithData:imageData];
+                if (image) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if (cell.tag == indexPath.row) {
+                            cell.imageView.image = [image imageWithRoundedCornersRadius:5];
+                            [cell setNeedsLayout];
+                            [self.authorImages setObject:imageData forKey:thisNewAuthor];
+                        }
+                    });
+                }
+            }
+        });
+    }
     return cell;
 }
 
@@ -93,11 +155,6 @@
     return [[self.forumTopics.topics objectAtIndex:row] color];
 }
 
-- (UIImage *)getImageForRow:(NSUInteger)row
-{
-    NSData * imageData = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: [NSString stringWithFormat:@"https://avatar.oc.tc/%@/48.png",[[self.forumTopics.topics objectAtIndex:row] author]]]];
-    return [UIImage imageWithData:imageData];
-}
 /*
 #pragma mark - Navigation
 

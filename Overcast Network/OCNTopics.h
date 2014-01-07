@@ -7,12 +7,11 @@
 //
 
 #import "Topic.h"
-#import "RegexFinder.h"
-#import "Source.h"
 
 @interface OCNTopics : Topic
 
-@property (nonatomic, strong) NSMutableArray *topics;
+@property (nonatomic,strong) NSMutableArray *topics;
+@property (nonatomic) BOOL mode;
 
 - (void)refreshTopics;
 

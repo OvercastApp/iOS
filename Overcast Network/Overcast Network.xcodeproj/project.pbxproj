@@ -25,9 +25,8 @@
 		5F06EFE71876A1B400D2C1B4 /* OCNTopics.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F06EFE61876A1B400D2C1B4 /* OCNTopics.m */; };
 		5F4E255F1876BE4E00D4A9F5 /* Topic.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4E255E1876BE4E00D4A9F5 /* Topic.m */; };
 		5F4E25621876F0B000D4A9F5 /* OCNTopicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4E25611876F0B000D4A9F5 /* OCNTopicViewController.m */; };
-		5F4E25651877862600D4A9F5 /* RegexFinder.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4E25641877862600D4A9F5 /* RegexFinder.m */; };
-		5F4E2568187789C500D4A9F5 /* Source.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4E2567187789C500D4A9F5 /* Source.m */; };
 		5F4E256B1877A2C500D4A9F5 /* UIColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4E256A1877A2C500D4A9F5 /* UIColor+Hex.m */; };
+		5FA24E73187C27D4002D83E5 /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA24E72187C27D4002D83E5 /* UIImage+RoundedCorner.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,12 +66,10 @@
 		5F4E255E1876BE4E00D4A9F5 /* Topic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Topic.m; path = ../Topic.m; sourceTree = "<group>"; };
 		5F4E25601876F0B000D4A9F5 /* OCNTopicViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCNTopicViewController.h; sourceTree = "<group>"; };
 		5F4E25611876F0B000D4A9F5 /* OCNTopicViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCNTopicViewController.m; sourceTree = "<group>"; };
-		5F4E25631877862600D4A9F5 /* RegexFinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexFinder.h; sourceTree = "<group>"; };
-		5F4E25641877862600D4A9F5 /* RegexFinder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexFinder.m; sourceTree = "<group>"; };
-		5F4E2566187789C400D4A9F5 /* Source.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Source.h; sourceTree = "<group>"; };
-		5F4E2567187789C500D4A9F5 /* Source.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Source.m; sourceTree = "<group>"; };
 		5F4E25691877A2C500D4A9F5 /* UIColor+Hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Hex.h"; sourceTree = "<group>"; };
 		5F4E256A1877A2C500D4A9F5 /* UIColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Hex.m"; sourceTree = "<group>"; };
+		5FA24E71187C27D4002D83E5 /* UIImage+RoundedCorner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+RoundedCorner.h"; sourceTree = "<group>"; };
+		5FA24E72187C27D4002D83E5 /* UIImage+RoundedCorner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+RoundedCorner.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,12 +186,10 @@
 			children = (
 				5F4E25691877A2C500D4A9F5 /* UIColor+Hex.h */,
 				5F4E256A1877A2C500D4A9F5 /* UIColor+Hex.m */,
+				5FA24E71187C27D4002D83E5 /* UIImage+RoundedCorner.h */,
+				5FA24E72187C27D4002D83E5 /* UIImage+RoundedCorner.m */,
 				5F4E255D1876BE4E00D4A9F5 /* Topic.h */,
 				5F4E255E1876BE4E00D4A9F5 /* Topic.m */,
-				5F4E25631877862600D4A9F5 /* RegexFinder.h */,
-				5F4E25641877862600D4A9F5 /* RegexFinder.m */,
-				5F4E2566187789C400D4A9F5 /* Source.h */,
-				5F4E2567187789C500D4A9F5 /* Source.m */,
 				5F06EFE51876A1B400D2C1B4 /* OCNTopics.h */,
 				5F06EFE61876A1B400D2C1B4 /* OCNTopics.m */,
 			);
@@ -300,13 +295,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FA24E73187C27D4002D83E5 /* UIImage+RoundedCorner.m in Sources */,
 				5F06EFE71876A1B400D2C1B4 /* OCNTopics.m in Sources */,
 				5F06EFAD1876655200D2C1B4 /* main.m in Sources */,
 				5F06EFB11876655200D2C1B4 /* OCNAppDelegate.m in Sources */,
 				5F4E25621876F0B000D4A9F5 /* OCNTopicViewController.m in Sources */,
 				5F4E256B1877A2C500D4A9F5 /* UIColor+Hex.m in Sources */,
-				5F4E2568187789C500D4A9F5 /* Source.m in Sources */,
-				5F4E25651877862600D4A9F5 /* RegexFinder.m in Sources */,
 				5F4E255F1876BE4E00D4A9F5 /* Topic.m in Sources */,
 				5F06EFDD1876663A00D2C1B4 /* OCNForumsViewController.m in Sources */,
 			);

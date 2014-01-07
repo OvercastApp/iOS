@@ -8,7 +8,7 @@
         <scene sceneID="Azc-dJ-ejQ">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="jKA-Hx-BB2" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Forums" id="4fl-9B-9bm"/>
+                    <tabBarItem key="tabBarItem" title="Forums" image="ForumsSelected" id="4fl-9B-9bm"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="UgI-Jn-o53">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -36,7 +36,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Profile" id="fHi-vq-VVt"/>
+                    <tabBarItem key="tabBarItem" title="Profile" image="Profile" id="fHi-vq-VVt"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CCk-vZ-Bha" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -144,6 +144,10 @@
             <point key="canvasLocation" x="552" y="222"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="ForumsSelected" width="30" height="30"/>
+        <image name="Profile" width="16" height="16"/>
+    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
