@@ -15,11 +15,15 @@
     UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
     UITabBar *tabBar = tabBarController.tabBar;
     UITabBarItem *tabBarItem1 = [tabBar.items objectAtIndex:0];
-//    UITabBarItem *tabBarItem2 = [tabBar.items objectAtIndex:1];
-    
-    tabBarItem1.selectedImage = [[UIImage imageNamed:@"ForumsSelected.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
-    tabBarItem1.image = [[UIImage imageNamed:@"Forums.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
+    UITabBarItem *tabBarItem2 = [tabBar.items objectAtIndex:1];
+
+    tabBarItem1.selectedImage = [[UIImage imageNamed:@"ForumsSelected.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    tabBarItem1.image = [[UIImage imageNamed:@"Forums.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     tabBarItem1.title = @"Forums";
+    
+    tabBarItem2.selectedImage = [[UIImage imageNamed:@"ProfileSelected.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    tabBarItem2.image = [[UIImage imageNamed:@"Profile.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    tabBarItem2.title = @"Profile";
     
     // Override point for customization after application launch.
     return YES;

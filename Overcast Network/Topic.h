@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "UIColor+Hex.h"
 
 @interface Topic : NSObject
 

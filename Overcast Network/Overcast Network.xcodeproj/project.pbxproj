@@ -24,9 +24,10 @@
 		5F06EFDD1876663A00D2C1B4 /* OCNForumsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F06EFDC1876663A00D2C1B4 /* OCNForumsViewController.m */; };
 		5F06EFE71876A1B400D2C1B4 /* OCNTopics.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F06EFE61876A1B400D2C1B4 /* OCNTopics.m */; };
 		5F4E255F1876BE4E00D4A9F5 /* Topic.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4E255E1876BE4E00D4A9F5 /* Topic.m */; };
-		5F4E25621876F0B000D4A9F5 /* OCNTopicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4E25611876F0B000D4A9F5 /* OCNTopicViewController.m */; };
-		5F4E256B1877A2C500D4A9F5 /* UIColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4E256A1877A2C500D4A9F5 /* UIColor+Hex.m */; };
+		5F84A48C187FEA5C0000FF36 /* OCNTopicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F84A48B187FEA5C0000FF36 /* OCNTopicViewController.m */; };
+		5FA128061881079B00EAEDE0 /* CatergoriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA128051881079B00EAEDE0 /* CatergoriesViewController.m */; };
 		5FA24E73187C27D4002D83E5 /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA24E72187C27D4002D83E5 /* UIImage+RoundedCorner.m */; };
+		5FF7216E187ECF370099271B /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FF7216D187ECF370099271B /* ProfileViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,12 +65,14 @@
 		5F06EFE61876A1B400D2C1B4 /* OCNTopics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCNTopics.m; path = ../OCNTopics.m; sourceTree = "<group>"; };
 		5F4E255D1876BE4E00D4A9F5 /* Topic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Topic.h; path = ../Topic.h; sourceTree = "<group>"; };
 		5F4E255E1876BE4E00D4A9F5 /* Topic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Topic.m; path = ../Topic.m; sourceTree = "<group>"; };
-		5F4E25601876F0B000D4A9F5 /* OCNTopicViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCNTopicViewController.h; sourceTree = "<group>"; };
-		5F4E25611876F0B000D4A9F5 /* OCNTopicViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCNTopicViewController.m; sourceTree = "<group>"; };
-		5F4E25691877A2C500D4A9F5 /* UIColor+Hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Hex.h"; sourceTree = "<group>"; };
-		5F4E256A1877A2C500D4A9F5 /* UIColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Hex.m"; sourceTree = "<group>"; };
+		5F84A48A187FEA5C0000FF36 /* OCNTopicViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCNTopicViewController.h; path = ../OCNTopicViewController.h; sourceTree = "<group>"; };
+		5F84A48B187FEA5C0000FF36 /* OCNTopicViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OCNTopicViewController.m; path = ../OCNTopicViewController.m; sourceTree = "<group>"; };
+		5FA128041881079B00EAEDE0 /* CatergoriesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CatergoriesViewController.h; sourceTree = "<group>"; };
+		5FA128051881079B00EAEDE0 /* CatergoriesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CatergoriesViewController.m; sourceTree = "<group>"; };
 		5FA24E71187C27D4002D83E5 /* UIImage+RoundedCorner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+RoundedCorner.h"; sourceTree = "<group>"; };
 		5FA24E72187C27D4002D83E5 /* UIImage+RoundedCorner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+RoundedCorner.m"; sourceTree = "<group>"; };
+		5FF7216C187ECF370099271B /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewController.h; sourceTree = "<group>"; };
+		5FF7216D187ECF370099271B /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,8 +135,7 @@
 				5F06EFB21876655200D2C1B4 /* Main_iPhone.storyboard */,
 				5F06EFB51876655200D2C1B4 /* Main_iPad.storyboard */,
 				5F06EFE41876A13400D2C1B4 /* Forums */,
-				5F4E25601876F0B000D4A9F5 /* OCNTopicViewController.h */,
-				5F4E25611876F0B000D4A9F5 /* OCNTopicViewController.m */,
+				5FF7216F187ECF530099271B /* Profile */,
 				5F06EFBB1876655200D2C1B4 /* Images.xcassets */,
 				5F06EFA71876655200D2C1B4 /* Supporting Files */,
 			);
@@ -177,6 +179,10 @@
 				5F06EFDB1876663A00D2C1B4 /* OCNForumsViewController.h */,
 				5F06EFDC1876663A00D2C1B4 /* OCNForumsViewController.m */,
 				5F06EFE81876AA1E00D2C1B4 /* Model */,
+				5FA128041881079B00EAEDE0 /* CatergoriesViewController.h */,
+				5FA128051881079B00EAEDE0 /* CatergoriesViewController.m */,
+				5F84A48A187FEA5C0000FF36 /* OCNTopicViewController.h */,
+				5F84A48B187FEA5C0000FF36 /* OCNTopicViewController.m */,
 			);
 			name = Forums;
 			sourceTree = "<group>";
@@ -184,16 +190,23 @@
 		5F06EFE81876AA1E00D2C1B4 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				5F4E25691877A2C500D4A9F5 /* UIColor+Hex.h */,
-				5F4E256A1877A2C500D4A9F5 /* UIColor+Hex.m */,
-				5FA24E71187C27D4002D83E5 /* UIImage+RoundedCorner.h */,
-				5FA24E72187C27D4002D83E5 /* UIImage+RoundedCorner.m */,
-				5F4E255D1876BE4E00D4A9F5 /* Topic.h */,
-				5F4E255E1876BE4E00D4A9F5 /* Topic.m */,
 				5F06EFE51876A1B400D2C1B4 /* OCNTopics.h */,
 				5F06EFE61876A1B400D2C1B4 /* OCNTopics.m */,
+				5F4E255D1876BE4E00D4A9F5 /* Topic.h */,
+				5F4E255E1876BE4E00D4A9F5 /* Topic.m */,
+				5FA24E71187C27D4002D83E5 /* UIImage+RoundedCorner.h */,
+				5FA24E72187C27D4002D83E5 /* UIImage+RoundedCorner.m */,
 			);
 			name = Model;
+			sourceTree = "<group>";
+		};
+		5FF7216F187ECF530099271B /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				5FF7216C187ECF370099271B /* ProfileViewController.h */,
+				5FF7216D187ECF370099271B /* ProfileViewController.m */,
+			);
+			name = Profile;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -244,6 +257,9 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = Schem;
 				TargetAttributes = {
+					5F06EF9C1876655200D2C1B4 = {
+						DevelopmentTeam = H957Q87XZ7;
+					};
 					5F06EFC01876655200D2C1B4 = {
 						TestTargetID = 5F06EF9C1876655200D2C1B4;
 					};
@@ -296,11 +312,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FA24E73187C27D4002D83E5 /* UIImage+RoundedCorner.m in Sources */,
+				5FF7216E187ECF370099271B /* ProfileViewController.m in Sources */,
 				5F06EFE71876A1B400D2C1B4 /* OCNTopics.m in Sources */,
 				5F06EFAD1876655200D2C1B4 /* main.m in Sources */,
+				5FA128061881079B00EAEDE0 /* CatergoriesViewController.m in Sources */,
 				5F06EFB11876655200D2C1B4 /* OCNAppDelegate.m in Sources */,
-				5F4E25621876F0B000D4A9F5 /* OCNTopicViewController.m in Sources */,
-				5F4E256B1877A2C500D4A9F5 /* UIColor+Hex.m in Sources */,
+				5F84A48C187FEA5C0000FF36 /* OCNTopicViewController.m in Sources */,
 				5F4E255F1876BE4E00D4A9F5 /* Topic.m in Sources */,
 				5F06EFDD1876663A00D2C1B4 /* OCNForumsViewController.m in Sources */,
 			);
@@ -439,10 +456,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Overcast Network/Overcast Network-Prefix.pch";
 				INFOPLIST_FILE = "Overcast Network/Overcast Network-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = Overcast;
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -452,10 +473,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Overcast Network/Overcast Network-Prefix.pch";
 				INFOPLIST_FILE = "Overcast Network/Overcast Network-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = Overcast;
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
