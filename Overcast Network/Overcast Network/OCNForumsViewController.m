@@ -16,6 +16,12 @@
 
 @implementation OCNForumsViewController
 
+- (id)initWithStyle:(UITableViewStyle)style
+{
+    self = [super initWithStyle:style];
+    return self;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -26,65 +32,63 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;]
     
-    self.forumTopics = [[OCNTopics alloc] init];
     self.authorImages = [[NSMutableDictionary alloc] init];
-    [self.refreshWheel beginRefreshing];
+    currentForum = [[Forum alloc] init];
+    self.navigationController.title = currentForum.title;
+    forumTopics = [[TopicParser alloc] init];
     [self refreshForumContent];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(updateUI:)
                                                  name:@"Update"
                                                object:nil];
-    self.refreshing = false;
+    refreshing = false;
 }
 
 - (IBAction)refreshContent {
-    if (!self.isRefreshing) {
+    if (!refreshing) {
         [self refreshForumContent];
-        self.refreshing = true;
+        refreshing = true;
     }
 }
 
 - (void)refreshForumContent
 {
-    [self.forumTopics refreshTopics];
-}
-
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
+    [self.refreshWheel beginRefreshing];
+    if (self.tableView.contentOffset.y == 0) {
+        [self.tableView setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height) animated:YES];
     }
-    return self;
+    [forumTopics refreshTopicsWithURL:currentForum.url];
 }
 
-- (void) updateUI:(NSNotification *)notification
+- (void)updateUI:(NSNotification *)notification
 {
     if ([[notification name] isEqualToString:@"Update"])
     {
         NSLog (@"Updating UI");
-        NSLog(@"A total of %lu topics",(unsigned long)[self.forumTopics.topics count]);
+        NSLog(@"A total of %lu topics",(unsigned long)[forumTopics.topics count]);
         dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
-        for (Topic *topic in self.forumTopics.topics) {
+        for (Topic *topic in forumTopics.topics) {
             dispatch_async(queue, ^(void) {
-                int index = [self.forumTopics.topics indexOfObject:topic];
+                int index = [forumTopics.topics indexOfObject:topic];
                 NSString *author = topic.author;
                 if (![self.authorImages objectForKey:author]) {
-                    NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://avatar.oc.tc/%@/48.png",author]]];
+                    NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://ocnapp.maxsa.li/avatar.php?name=%@&size=48",author]]];
                     UIImage* image = [[UIImage alloc] initWithData:imageData];
                     if (image) {
                         NSIndexPath *rowToReload = [NSIndexPath indexPathForRow:index inSection:0];
                         NSArray *rowsToReload = [[NSArray alloc] initWithObjects:rowToReload, nil];
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            [self.authorImages setObject:image forKey:author];
-                            [self.tableView reloadRowsAtIndexPaths:rowsToReload withRowAnimation:UITableViewRowAnimationAutomatic];
+                            if (!refreshing) {
+                                [self.authorImages setObject:image forKey:author];
+                                [self.tableView reloadRowsAtIndexPaths:rowsToReload withRowAnimation:UITableViewRowAnimationAutomatic];
+                            }
                         });
                     }
                 }
             });
         }
         [self.tableView reloadData];
-        self.refreshing = false;
+        refreshing = false;
         [self.refreshWheel endRefreshing];
     }
 }
@@ -100,7 +104,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [self.forumTopics.topics count];
+    return [forumTopics.topics count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -131,22 +135,25 @@
 
 - (NSString *)getTitleForRow:(NSUInteger)row
 {
-    return [[self.forumTopics.topics objectAtIndex:row] title];
+    return [[forumTopics.topics objectAtIndex:row] title];
 }
 
 - (NSString *)getAuthorForRow:(NSUInteger)row
 {
-    return [[self.forumTopics.topics objectAtIndex:row] author];
+    return [[forumTopics.topics objectAtIndex:row] author];
 }
 
 - (UIColor *)getColorForRow:(NSUInteger)row
 {
-    return [[self.forumTopics.topics objectAtIndex:row] color];
+    if ([[[forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"mod"]) {
+        return [UIColor redColor];
+    }
+    return [UIColor blackColor];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.destinationViewController isKindOfClass:[OCNTopicViewController class]]) {
+    if ([segue.identifier isEqualToString:@"Topic"]) {
         OCNTopicViewController *topicViewController = (OCNTopicViewController *)segue.destinationViewController;
         UIBarButtonItem *backItem = [[UIBarButtonItem alloc] initWithTitle:@"Topics"
                                                                      style:UIBarButtonItemStyleBordered
@@ -154,9 +161,24 @@
                                                                     action:nil];
         
         [self.navigationItem setBackBarButtonItem:backItem];
-        topicViewController.topic = [self.forumTopics.topics objectAtIndex:[sender tag]];
-        topicViewController.title = [[self.forumTopics.topics objectAtIndex:[sender tag]] title];
+        topicViewController.topic = [forumTopics.topics objectAtIndex:[sender tag]];
+        topicViewController.title = [[forumTopics.topics objectAtIndex:[sender tag]] title];
     }
+    else if ([segue.identifier isEqualToString:@"Category"]) {
+        UINavigationController *navigationController = [segue destinationViewController];
+        CategoriesViewController *categoriesViewController = (CategoriesViewController *)([navigationController viewControllers][0]);
+        categoriesViewController.currentForum = [[Forum alloc] init];
+        categoriesViewController.currentForum.index = currentForum.index;
+    }
+}
+
+- (void)unwind:(UIStoryboardSegue *)unwindSegue {
+    CategoriesViewController *category = (CategoriesViewController *)unwindSegue.sourceViewController;
+    currentForum = category.currentForum;
+    
+    self.navigationItem.title = currentForum.title;
+    refreshing = true;
+    [self refreshForumContent];
 }
 
 @end

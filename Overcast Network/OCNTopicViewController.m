@@ -18,7 +18,7 @@
 {
     [super viewDidLoad];
 	self.topicWebView = [[UIWebView alloc] init];
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://oc.tc/forums/topics/%@",self.topic.topicID]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@",self.topic.topicURL]];
     NSLog(@"%@",url);
     NSURLRequest *webRequest = [NSURLRequest requestWithURL:url];
     [self.topicWebView loadRequest:webRequest];

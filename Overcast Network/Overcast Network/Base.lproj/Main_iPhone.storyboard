@@ -86,7 +86,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="rg7-hr-22h" kind="push" id="KMh-5M-gEc"/>
+                                    <segue destination="rg7-hr-22h" kind="push" identifier="Topic" id="KMh-5M-gEc"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -96,9 +96,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="What's New?" id="JyV-Gc-MC3">
-                        <barButtonItem key="leftBarButtonItem" title="Catergories" id="t0Z-WM-qDF">
+                        <barButtonItem key="leftBarButtonItem" title="Categories" id="t0Z-WM-qDF">
                             <connections>
-                                <segue destination="J2L-Tc-4yz" kind="modal" id="Yjc-zB-XS6"/>
+                                <segue destination="J2L-Tc-4yz" kind="modal" identifier="Category" id="Yjc-zB-XS6"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -116,21 +116,30 @@
             </objects>
             <point key="canvasLocation" x="1549" y="217"/>
         </scene>
-        <!--Table View Controller - Catergories-->
+        <!--Categories View Controller - Categories-->
         <scene sceneID="5Gm-wW-RJ9">
             <objects>
-                <tableViewController id="H6x-Md-Md2" sceneMemberID="viewController">
+                <tableViewController id="H6x-Md-Md2" customClass="CategoriesViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="l2M-9Q-8ty">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="Dlk-Cm-xQI">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Forum Cell" textLabel="2eb-u5-OmC" style="IBUITableViewCellStyleDefault" id="Dlk-Cm-xQI">
                                 <rect key="frame" x="0.0" y="86" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Dlk-Cm-xQI" id="069-94-26G">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="2eb-u5-OmC">
+                                            <rect key="frame" x="15" y="0.0" width="290" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>
@@ -139,11 +148,19 @@
                             <outlet property="delegate" destination="H6x-Md-Md2" id="nh6-Qn-HnV"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Catergories" id="8nd-4g-8Lm">
-                        <barButtonItem key="rightBarButtonItem" title="Item" systemItem="cancel" id="uhz-ax-qRG"/>
+                    <navigationItem key="navigationItem" title="Categories" id="8nd-4g-8Lm">
+                        <barButtonItem key="rightBarButtonItem" title="Item" systemItem="cancel" id="uhz-ax-qRG">
+                            <connections>
+                                <action selector="cancel:" destination="H6x-Md-Md2" id="aPs-ZJ-Ewi"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="Ik4-D1-r9i" kind="unwind" identifier="Unwind From Categories" unwindAction="unwind:" id="5uc-TI-jzk"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rkW-E1-v9p" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="Ik4-D1-r9i" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="2525" y="-522"/>
         </scene>
