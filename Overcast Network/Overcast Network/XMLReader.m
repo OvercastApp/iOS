@@ -12,8 +12,7 @@ NSString *const kXMLReaderTextNodeKey = @"text";
 
 @implementation XMLReader
 
-#pragma mark -
-#pragma mark Public methods
+#pragma mark - Public methods
 
 + (NSDictionary *)dictionaryForXMLData:(NSData *)data
 {
@@ -28,8 +27,7 @@ NSString *const kXMLReaderTextNodeKey = @"text";
     return [XMLReader dictionaryForXMLData:data];
 }
 
-#pragma mark -
-#pragma mark Parsing
+#pragma mark - Parsing
 
 - (NSDictionary *)objectWithData:(NSData *)data
 {
@@ -55,8 +53,7 @@ NSString *const kXMLReaderTextNodeKey = @"text";
     return nil;
 }
 
-#pragma mark -
-#pragma mark NSXMLParserDelegate methods
+#pragma mark - NSXMLParserDelegate methods
 
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
 {

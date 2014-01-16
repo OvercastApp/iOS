@@ -12,23 +12,31 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
-    UITabBar *tabBar = tabBarController.tabBar;
-    UITabBarItem *tabBarItem1 = [tabBar.items objectAtIndex:0];
-    UITabBarItem *tabBarItem2 = [tabBar.items objectAtIndex:1];
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
+        UITabBar *tabBar = tabBarController.tabBar;
+        UITabBarItem *tabBarItem1 = [tabBar.items objectAtIndex:0];
+        UITabBarItem *tabBarItem2 = [tabBar.items objectAtIndex:1];
+        
+        tabBarItem1.selectedImage = [[UIImage imageNamed:@"ForumsSelected.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        tabBarItem1.image = [[UIImage imageNamed:@"Forums.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        tabBarItem1.title = @"Forums";
+        
+        tabBarItem2.selectedImage = [[UIImage imageNamed:@"ProfileSelected.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        tabBarItem2.image = [[UIImage imageNamed:@"Profile.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        tabBarItem2.title = @"Profile";
+    }
 
-    tabBarItem1.selectedImage = [[UIImage imageNamed:@"ForumsSelected.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    tabBarItem1.image = [[UIImage imageNamed:@"Forums.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    tabBarItem1.title = @"Forums";
-    
-    tabBarItem2.selectedImage = [[UIImage imageNamed:@"ProfileSelected.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    tabBarItem2.image = [[UIImage imageNamed:@"Profile.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    tabBarItem2.title = @"Profile";
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
+        UINavigationController *navigationController = [[splitViewController viewControllers] lastObject];
+        splitViewController.delegate = (id)navigationController.topViewController;
+    }
     
     // Override point for customization after application launch.
     return YES;
 }
-							
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

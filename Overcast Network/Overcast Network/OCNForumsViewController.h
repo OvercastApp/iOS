@@ -8,18 +8,24 @@
 
 #import <UIKit/UIKit.h>
 #import "TopicParser.h"
+#import "ForumParser.h"
 #import "Forum.h"
-#import "CategoriesViewController.h"
+
+@class OCNTopicViewController;
 
 @interface OCNForumsViewController : UITableViewController {
     @private
-    TopicParser *forumTopics;
     BOOL refreshing;
+    TopicParser *forumTopics;
+    ForumParser *categoryParser;
     Forum *currentForum;
 }
 
 @property (nonatomic,weak) IBOutlet UIRefreshControl *refreshWheel;
+@property (nonatomic,strong) IBOutlet UIBarButtonItem *categoriesButton;
 @property (nonatomic,strong) NSMutableDictionary *authorImages;
+@property (nonatomic,strong) OCNTopicViewController *topicViewController;
+@property (nonatomic,weak) UIPopoverController *categoriesPopover;
 
 - (IBAction)refreshContent;
 

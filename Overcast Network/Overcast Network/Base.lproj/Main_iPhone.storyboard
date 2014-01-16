@@ -96,7 +96,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="What's New?" id="JyV-Gc-MC3">
-                        <barButtonItem key="leftBarButtonItem" title="Categories" id="t0Z-WM-qDF">
+                        <barButtonItem key="leftBarButtonItem" enabled="NO" title="Categories" id="t0Z-WM-qDF">
                             <connections>
                                 <segue destination="J2L-Tc-4yz" kind="modal" identifier="Category" id="Yjc-zB-XS6"/>
                             </connections>
@@ -109,6 +109,7 @@
                         </connections>
                     </refreshControl>
                     <connections>
+                        <outlet property="categoriesButton" destination="t0Z-WM-qDF" id="Hsa-wa-cFU"/>
                         <outlet property="refreshWheel" destination="RQQ-Ox-hSZ" id="Dut-ez-uQJ"/>
                     </connections>
                 </tableViewController>
@@ -120,13 +121,13 @@
         <scene sceneID="5Gm-wW-RJ9">
             <objects>
                 <tableViewController id="H6x-Md-Md2" customClass="CategoriesViewController" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="l2M-9Q-8ty">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="l2M-9Q-8ty">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Forum Cell" textLabel="2eb-u5-OmC" style="IBUITableViewCellStyleDefault" id="Dlk-Cm-xQI">
-                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="119" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Dlk-Cm-xQI" id="069-94-26G">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>

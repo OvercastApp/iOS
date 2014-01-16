@@ -10,13 +10,10 @@
 #import "ForumParser.h"
 #import "Forum.h"
 
-@interface CategoriesViewController : UITableViewController {
-    @private
-    ForumParser *parser;
-    NSArray *parsedContents;
-}
+@interface CategoriesViewController : UITableViewController
 
 @property (nonatomic,strong) Forum *currentForum;
+@property (nonatomic,strong) NSArray *parsedContents;
 
 - (IBAction)cancel:(UIBarButtonItem *)sender;
 

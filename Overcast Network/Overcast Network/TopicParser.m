@@ -42,7 +42,7 @@
         newTopic.title = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"name.text"]];
         newTopic.topicURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"link.text"]]];
         newTopic.author = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"author.text"]];
-        newTopic.rank = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"rank.text"]];
+        newTopic.rank = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"author.rank"]];
         newTopic.lastUpdated = nil;
         
         NSLog(@"Topic Found: %@ by %@",newTopic.title,newTopic.author);

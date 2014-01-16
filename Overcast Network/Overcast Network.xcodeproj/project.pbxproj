@@ -141,6 +141,8 @@
 		5F06EFA61876655200D2C1B4 /* Overcast Network */ = {
 			isa = PBXGroup;
 			children = (
+				5F06EFAF1876655200D2C1B4 /* OCNAppDelegate.h */,
+				5F06EFB01876655200D2C1B4 /* OCNAppDelegate.m */,
 				5F06EFB21876655200D2C1B4 /* Main_iPhone.storyboard */,
 				5F06EFB51876655200D2C1B4 /* Main_iPad.storyboard */,
 				5F06EFE41876A13400D2C1B4 /* Forums */,
@@ -154,8 +156,6 @@
 		5F06EFA71876655200D2C1B4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				5F06EFAF1876655200D2C1B4 /* OCNAppDelegate.h */,
-				5F06EFB01876655200D2C1B4 /* OCNAppDelegate.m */,
 				5F06EFA81876655200D2C1B4 /* Overcast Network-Info.plist */,
 				5F06EFA91876655200D2C1B4 /* InfoPlist.strings */,
 				5F06EFAC1876655200D2C1B4 /* main.m */,
@@ -188,11 +188,12 @@
 				5F06EFDB1876663A00D2C1B4 /* OCNForumsViewController.h */,
 				5F06EFDC1876663A00D2C1B4 /* OCNForumsViewController.m */,
 				5F06EFE81876AA1E00D2C1B4 /* Model */,
+				5F84A48A187FEA5C0000FF36 /* OCNTopicViewController.h */,
+				5F84A48B187FEA5C0000FF36 /* OCNTopicViewController.m */,
+				5F2F194F1887D902007A1F78 /* Model */,
 				5FA1282518818A9300EAEDE0 /* CategoriesViewController.h */,
 				5FA1282618818A9300EAEDE0 /* CategoriesViewController.m */,
 				5FA1282E18818F5D00EAEDE0 /* Model */,
-				5F84A48A187FEA5C0000FF36 /* OCNTopicViewController.h */,
-				5F84A48B187FEA5C0000FF36 /* OCNTopicViewController.m */,
 				5FA1282F18818F8B00EAEDE0 /* External Classes */,
 			);
 			name = Forums;
@@ -205,6 +206,13 @@
 				5FA1280E18811D3B00EAEDE0 /* TopicParser.m */,
 				5F4E255D1876BE4E00D4A9F5 /* Topic.h */,
 				5F4E255E1876BE4E00D4A9F5 /* Topic.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		5F2F194F1887D902007A1F78 /* Model */ = {
+			isa = PBXGroup;
+			children = (
 			);
 			name = Model;
 			sourceTree = "<group>";

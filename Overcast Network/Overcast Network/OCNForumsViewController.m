@@ -8,6 +8,7 @@
 
 #import "OCNForumsViewController.h"
 #import "OCNTopicViewController.h"
+#import "CategoriesViewController.h"
 #import "UIImage+RoundedCorner.h"
 
 @interface OCNForumsViewController ()
@@ -26,16 +27,14 @@
 {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;]
-    
     self.authorImages = [[NSMutableDictionary alloc] init];
-    currentForum = [[Forum alloc] init];
     self.navigationController.title = currentForum.title;
+    self.topicViewController = (OCNTopicViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    
+    currentForum = [[Forum alloc] init];
     forumTopics = [[TopicParser alloc] init];
+    categoryParser = [[ForumParser alloc] init];
+    
     [self refreshForumContent];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(updateUI:)
@@ -44,8 +43,18 @@
     refreshing = false;
 }
 
-- (IBAction)refreshContent {
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Refreshing
+
+- (IBAction)refreshContent
+{
     if (!refreshing) {
+        self.categoriesButton.enabled = false;
         [self refreshForumContent];
         refreshing = true;
     }
@@ -58,6 +67,7 @@
         [self.tableView setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height) animated:YES];
     }
     [forumTopics refreshTopicsWithURL:currentForum.url];
+    [categoryParser refreshForums];
 }
 
 - (void)updateUI:(NSNotification *)notification
@@ -69,7 +79,7 @@
         dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
         for (Topic *topic in forumTopics.topics) {
             dispatch_async(queue, ^(void) {
-                int index = [forumTopics.topics indexOfObject:topic];
+                int index = (int)[forumTopics.topics indexOfObject:topic];
                 NSString *author = topic.author;
                 if (![self.authorImages objectForKey:author]) {
                     NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://ocnapp.maxsa.li/avatar.php?name=%@&size=48",author]]];
@@ -90,13 +100,8 @@
         [self.tableView reloadData];
         refreshing = false;
         [self.refreshWheel endRefreshing];
+        self.categoriesButton.enabled = true;
     }
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - Table view data source
@@ -148,28 +153,67 @@
     if ([[[forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"mod"]) {
         return [UIColor redColor];
     }
-    return [UIColor blackColor];
+    else return [UIColor blackColor];
+}
+
+#pragma mark - Table view delegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        [self prepareTopicViewController:self.topicViewController
+                               withIndex:indexPath.row];
+        [self.topicViewController refreshTopic];
+    }
+}
+
+#pragma mark - Segue Preparation
+
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+{
+    if ([identifier isEqualToString:@"Category"]) {
+        return self.categoriesPopover ? NO : YES;
+    } else return YES;
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+    // Prepare for OCNTopicViewController
     if ([segue.identifier isEqualToString:@"Topic"]) {
-        OCNTopicViewController *topicViewController = (OCNTopicViewController *)segue.destinationViewController;
+        [self prepareTopicViewController:self.topicViewController
+                               withIndex:[sender tag]];
         UIBarButtonItem *backItem = [[UIBarButtonItem alloc] initWithTitle:@"Topics"
                                                                      style:UIBarButtonItemStyleBordered
                                                                     target:nil
                                                                     action:nil];
-        
         [self.navigationItem setBackBarButtonItem:backItem];
-        topicViewController.topic = [forumTopics.topics objectAtIndex:[sender tag]];
-        topicViewController.title = [[forumTopics.topics objectAtIndex:[sender tag]] title];
     }
+    // Prepare for CategoriesViewController
     else if ([segue.identifier isEqualToString:@"Category"]) {
-        UINavigationController *navigationController = [segue destinationViewController];
-        CategoriesViewController *categoriesViewController = (CategoriesViewController *)([navigationController viewControllers][0]);
+        CategoriesViewController *categoriesViewController = [[CategoriesViewController alloc] init];
+        
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+            // Phone
+            UINavigationController *navigationController = [segue destinationViewController];
+            categoriesViewController = (CategoriesViewController *)([[navigationController viewControllers] firstObject]);
+        } else {
+            // Pad
+            categoriesViewController = (CategoriesViewController *)segue.destinationViewController;
+            UIStoryboardPopoverSegue *popoverSegue = (UIStoryboardPopoverSegue *)segue;
+            self.categoriesPopover = popoverSegue.popoverController;
+        }
+        
         categoriesViewController.currentForum = [[Forum alloc] init];
+        categoriesViewController.parsedContents = [[NSArray alloc] init];
+        
         categoriesViewController.currentForum.index = currentForum.index;
+        categoriesViewController.parsedContents = categoryParser.parsedContents;
     }
+}
+
+- (void)prepareTopicViewController:(OCNTopicViewController *)topicvc withIndex:(NSUInteger)index {
+    topicvc.topic = [forumTopics.topics objectAtIndex:index];
+    topicvc.title = [[forumTopics.topics objectAtIndex:index] title];
 }
 
 - (void)unwind:(UIStoryboardSegue *)unwindSegue {

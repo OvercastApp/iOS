@@ -24,22 +24,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    parser = [[ForumParser alloc] init];
-    [parser refreshForums];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateUI:)
-                                                 name:@"UpdateForums"
-                                               object:nil];
 }
 
-- (void) updateUI:(NSNotification *)notification
-{
-    if ([[notification name] isEqualToString:@"UpdateForums"])
-    {
-        parsedContents = [[NSArray alloc] initWithArray:parser.parsedContents];
-    }
-    [self.tableView reloadData];
-}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -57,7 +43,7 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return [parsedContents count];
+    return [self.parsedContents count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -66,24 +52,23 @@
     if (section == 0) {
         return 1;
     }
-    return [[parsedContents objectAtIndex:section] count];
+    return [[self.parsedContents objectAtIndex:section] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Forum Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    
+    // Label
     if (indexPath.section == 0 && indexPath.row == 0) {
         cell.textLabel.text = @"What's New";
-    }
-    else {
-        NSDictionary *sectionData = [parsedContents objectAtIndex:indexPath.section];
+    } else {
+        NSDictionary *sectionData = [self.parsedContents objectAtIndex:indexPath.section];
         cell.textLabel.text = [[[sectionData valueForKey:@"subforum"] objectAtIndex:indexPath.row] valueForKey:@"text"];
     }
     
-    if (cell.accessoryType == UITableViewCellAccessoryCheckmark) {
-        self.currentForum.index = indexPath;
-    }
+    // Checkmark
     if (indexPath.row == self.currentForum.index.row && indexPath.section == self.currentForum.index.section) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
@@ -97,8 +82,10 @@
     if (section == 0) {
         return nil;
     }
-    return [[parsedContents objectAtIndex:section] valueForKey:@"name"];
+    return [[self.parsedContents objectAtIndex:section] valueForKey:@"name"];
 }
+
+#pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -107,7 +94,7 @@
         self.currentForum.url = [NSURL URLWithString:@"https://oc.tc/forums"];
     }
     else {
-        NSDictionary *sectionData = [parsedContents objectAtIndex:indexPath.section];
+        NSDictionary *sectionData = [self.parsedContents objectAtIndex:indexPath.section];
         self.currentForum.title = [[[sectionData valueForKey:@"subforum"] objectAtIndex:indexPath.row] valueForKey:@"text"];
         self.currentForum.url = [[[sectionData valueForKey:@"subforum"] objectAtIndex:indexPath.row] valueForKey:@"link"];
     }
@@ -117,7 +104,14 @@
     }
     self.currentForum.index = indexPath;
     
-    [self performSegueWithIdentifier:@"Unwind From Categories" sender:self];
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        // Phone
+        [self performSegueWithIdentifier:@"Unwind From Categories" sender:self];
+    } else {
+        // Pad
+        [self dismissViewControllerAnimated:YES
+                                 completion:nil];
+    }
 }
 
 @end
