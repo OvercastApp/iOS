@@ -104,14 +104,7 @@
     }
     self.currentForum.index = indexPath;
     
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        // Phone
-        [self performSegueWithIdentifier:@"Unwind From Categories" sender:self];
-    } else {
-        // Pad
-        [self dismissViewControllerAnimated:YES
-                                 completion:nil];
-    }
+    [self performSegueWithIdentifier:@"Unwind From Categories" sender:self];
 }
 
 @end

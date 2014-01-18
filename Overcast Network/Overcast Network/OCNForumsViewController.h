@@ -13,9 +13,10 @@
 
 @class OCNTopicViewController;
 
-@interface OCNForumsViewController : UITableViewController {
+@interface OCNForumsViewController : UITableViewController{
     @private
     BOOL refreshing;
+    
     TopicParser *forumTopics;
     ForumParser *categoryParser;
     Forum *currentForum;
@@ -24,8 +25,9 @@
 @property (nonatomic,weak) IBOutlet UIRefreshControl *refreshWheel;
 @property (nonatomic,strong) IBOutlet UIBarButtonItem *categoriesButton;
 @property (nonatomic,strong) NSMutableDictionary *authorImages;
-@property (nonatomic,strong) OCNTopicViewController *topicViewController;
 @property (nonatomic,weak) UIPopoverController *categoriesPopover;
+
+@property (nonatomic,strong) OCNTopicViewController *topicViewController;
 
 - (IBAction)refreshContent;
 

@@ -37,21 +37,27 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Profile" image="Profile" id="fHi-vq-VVt"/>
-                    <connections>
-                        <outlet property="searchDisplayController" destination="W7J-gr-ull" id="q6h-Bv-snD"/>
-                    </connections>
+                    <navigationItem key="navigationItem" title="Profile" id="j66-MA-0JD"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CCk-vZ-Bha" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <searchDisplayController id="W7J-gr-ull">
-                    <connections>
-                        <outlet property="delegate" destination="WXj-V9-3zt" id="bVj-BM-2Z1"/>
-                        <outlet property="searchContentsController" destination="WXj-V9-3zt" id="fTr-zA-E90"/>
-                        <outlet property="searchResultsDataSource" destination="WXj-V9-3zt" id="BsR-at-MW7"/>
-                        <outlet property="searchResultsDelegate" destination="WXj-V9-3zt" id="3RE-lm-fec"/>
-                    </connections>
-                </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="1078" y="916"/>
+            <point key="canvasLocation" x="1549" y="921"/>
+        </scene>
+        <!--Navigation Controller - Profile-->
+        <scene sceneID="OyW-MM-tgq">
+            <objects>
+                <navigationController definesPresentationContext="YES" id="ltx-DC-NIN" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Profile" image="Profile" id="dvp-VZ-gRS"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="wZS-BE-RcJ">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="WXj-V9-3zt" kind="relationship" relationship="rootViewController" id="EKK-3w-inL"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9T5-DE-Xat" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1078" y="921"/>
         </scene>
         <!--Forums View Controller - What's New?-->
         <scene sceneID="zJc-uR-wMJ">
@@ -206,7 +212,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="jKA-Hx-BB2" kind="relationship" relationship="viewControllers" id="lj9-5W-2H1"/>
-                        <segue destination="WXj-V9-3zt" kind="relationship" relationship="viewControllers" id="1Gb-6D-xTg"/>
+                        <segue destination="ltx-DC-NIN" kind="relationship" relationship="viewControllers" id="RJD-fa-Fyv"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xlS-dn-93p" userLabel="First Responder" sceneMemberID="firstResponder"/>
