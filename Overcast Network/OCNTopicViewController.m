@@ -17,7 +17,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	self.topicWebView = [[UIWebView alloc] init];
+    [self refreshTopic];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -36,10 +36,12 @@
 - (void)refreshTopic
 {
     [self.masterPopoverController dismissPopoverAnimated:YES];
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@",self.topic.topicURL]];
-    NSLog(@"%@",url);
-    NSURLRequest *webRequest = [NSURLRequest requestWithURL:url];
-    [self.topicWebView loadRequest:webRequest];
+    NSURL *url = self.topic.topicURL;
+    if (url != nil) {
+        NSLog(@"%@",url);
+        NSURLRequest *webRequest = [NSURLRequest requestWithURL:url];
+        [self.topicWebView loadRequest:webRequest];
+    }
 }
 
 #pragma mark - Split view

@@ -29,6 +29,7 @@
     
     self.authorImages = [[NSMutableDictionary alloc] init];
     self.navigationController.title = currentForum.title;
+    self.topicViewController = [[OCNTopicViewController alloc] init];
     self.topicViewController = (OCNTopicViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     
     currentForum = [[Forum alloc] init];
@@ -74,15 +75,16 @@
 {
     if ([[notification name] isEqualToString:@"Update"])
     {
-        NSLog (@"Updating UI");
-        NSLog(@"A total of %lu topics",(unsigned long)[forumTopics.topics count]);
+        NSLog (@"Updating UI with a total of %lu topics",(unsigned long)[forumTopics.topics count]);
+        settings = [NSUserDefaults standardUserDefaults];
         dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
         for (Topic *topic in forumTopics.topics) {
             dispatch_async(queue, ^(void) {
                 int index = (int)[forumTopics.topics indexOfObject:topic];
                 NSString *author = topic.author;
                 if (![self.authorImages objectForKey:author]) {
-                    NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://ocnapp.maxsa.li/avatar.php?name=%@&size=48",author]]];
+                    NSString *sourceURL = [[settings stringForKey:@"image_source_preference"] isEqualToString:@"1"] ? [NSString stringWithFormat:@"http://ocnapp.maxsa.li/avatar.php?name=%@&size=48",author] : [NSString stringWithFormat:@"https://avatar.oc.tc/%@/48.png",author];
+                    NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:sourceURL]];
                     UIImage* image = [[UIImage alloc] initWithData:imageData];
                     if (image) {
                         NSIndexPath *rowToReload = [NSIndexPath indexPathForRow:index inSection:0];
@@ -152,6 +154,14 @@
 {
     if ([[[forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"mod"]) {
         return [UIColor redColor];
+    } else if ([[[forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"admin"]) {
+        return [UIColor orangeColor];
+    } else if ([[[forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"jrmod"]) {
+        return [UIColor colorWithRed:1.0 green:0.5 blue:0.5 alpha:1.0];
+    } else if ([[[forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"srmod"]) {
+        return [UIColor colorWithRed:0.5 green:0.0 blue:0.0 alpha:1.0];
+    } else if ([[[forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"dev"]) {
+        return [UIColor purpleColor];
     }
     else return [UIColor blackColor];
 }
@@ -161,8 +171,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        [self prepareTopicViewController:self.topicViewController
-                               withIndex:indexPath.row];
+        self.topicViewController.topic = [forumTopics.topics objectAtIndex:indexPath.row];
+        self.topicViewController.title = [[forumTopics.topics objectAtIndex:indexPath.row] title];
         [self.topicViewController refreshTopic];
     }
 }
@@ -180,13 +190,15 @@
 {
     // Prepare for OCNTopicViewController
     if ([segue.identifier isEqualToString:@"Topic"]) {
-        [self prepareTopicViewController:self.topicViewController
-                               withIndex:[sender tag]];
+        OCNTopicViewController *tvc = (OCNTopicViewController *)segue.destinationViewController;
         UIBarButtonItem *backItem = [[UIBarButtonItem alloc] initWithTitle:@"Topics"
                                                                      style:UIBarButtonItemStyleBordered
                                                                     target:nil
                                                                     action:nil];
         [self.navigationItem setBackBarButtonItem:backItem];
+        tvc.topic = [forumTopics.topics objectAtIndex:[sender tag]];
+        tvc.title = [[forumTopics.topics objectAtIndex:[sender tag]] title];
+        tvc = self.topicViewController;
     }
     // Prepare for CategoriesViewController
     else if ([segue.identifier isEqualToString:@"Category"]) {
@@ -209,11 +221,6 @@
         categoriesViewController.currentForum.index = currentForum.index;
         categoriesViewController.parsedContents = categoryParser.parsedContents;
     }
-}
-
-- (void)prepareTopicViewController:(OCNTopicViewController *)topicvc withIndex:(NSUInteger)index {
-    topicvc.topic = [forumTopics.topics objectAtIndex:index];
-    topicvc.title = [[forumTopics.topics objectAtIndex:index] title];
 }
 
 - (void)unwind:(UIStoryboardSegue *)unwindSegue {

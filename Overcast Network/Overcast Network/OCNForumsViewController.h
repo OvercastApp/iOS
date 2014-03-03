@@ -16,6 +16,7 @@
 @interface OCNForumsViewController : UITableViewController{
     @private
     BOOL refreshing;
+    NSUserDefaults *settings;
     
     TopicParser *forumTopics;
     ForumParser *categoryParser;

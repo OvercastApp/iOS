@@ -22,6 +22,7 @@
 		5F06EFCD1876655200D2C1B4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5F06EFCB1876655200D2C1B4 /* InfoPlist.strings */; };
 		5F06EFCF1876655200D2C1B4 /* Overcast_NetworkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F06EFCE1876655200D2C1B4 /* Overcast_NetworkTests.m */; };
 		5F06EFDD1876663A00D2C1B4 /* OCNForumsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F06EFDC1876663A00D2C1B4 /* OCNForumsViewController.m */; };
+		5F131A60188AC41D00FEF76A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5F131A5F188AC41D00FEF76A /* Settings.bundle */; };
 		5F4E255F1876BE4E00D4A9F5 /* Topic.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4E255E1876BE4E00D4A9F5 /* Topic.m */; };
 		5F84A48C187FEA5C0000FF36 /* OCNTopicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F84A48B187FEA5C0000FF36 /* OCNTopicViewController.m */; };
 		5FA1280F18811D3B00EAEDE0 /* TopicParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1280E18811D3B00EAEDE0 /* TopicParser.m */; };
@@ -64,6 +65,7 @@
 		5F06EFCE1876655200D2C1B4 /* Overcast_NetworkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Overcast_NetworkTests.m; sourceTree = "<group>"; };
 		5F06EFDB1876663A00D2C1B4 /* OCNForumsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCNForumsViewController.h; sourceTree = "<group>"; };
 		5F06EFDC1876663A00D2C1B4 /* OCNForumsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCNForumsViewController.m; sourceTree = "<group>"; };
+		5F131A5F188AC41D00FEF76A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		5F4E255D1876BE4E00D4A9F5 /* Topic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Topic.h; path = ../Topic.h; sourceTree = "<group>"; };
 		5F4E255E1876BE4E00D4A9F5 /* Topic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Topic.m; path = ../Topic.m; sourceTree = "<group>"; };
 		5F84A48A187FEA5C0000FF36 /* OCNTopicViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OCNTopicViewController.h; path = ../OCNTopicViewController.h; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 		5F06EF941876655200D2C1B4 = {
 			isa = PBXGroup;
 			children = (
+				5F131A5F188AC41D00FEF76A /* Settings.bundle */,
 				5F06EFA61876655200D2C1B4 /* Overcast Network */,
 				5F06EFC81876655200D2C1B4 /* Overcast NetworkTests */,
 				5F06EF9F1876655200D2C1B4 /* Frameworks */,
@@ -330,6 +333,7 @@
 			files = (
 				5F06EFB71876655200D2C1B4 /* Main_iPad.storyboard in Resources */,
 				5F06EFBC1876655200D2C1B4 /* Images.xcassets in Resources */,
+				5F131A60188AC41D00FEF76A /* Settings.bundle in Resources */,
 				5F06EFB41876655200D2C1B4 /* Main_iPhone.storyboard in Resources */,
 				5F06EFAB1876655200D2C1B4 /* InfoPlist.strings in Resources */,
 			);

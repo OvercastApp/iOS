@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13A598" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="i5o-tC-Q8Y">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13C64" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="i5o-tC-Q8Y">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
@@ -141,7 +141,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="B19-Bd-Btu" kind="relationship" relationship="rootViewController" id="rRy-4X-cYq"/>
+                        <segue destination="QeW-Nu-Xjd" kind="relationship" relationship="rootViewController" id="Yt2-ze-SAg"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="th7-GJ-3di" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -180,31 +180,20 @@
             <point key="canvasLocation" x="898" y="210"/>
         </scene>
         <!--Topic View Controller-->
-        <scene sceneID="Lg7-by-Tl8">
+        <scene sceneID="tnk-Uz-hMl">
             <objects>
-                <viewController id="B19-Bd-Btu" customClass="OCNTopicViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="gOW-Bh-a7J"/>
-                        <viewControllerLayoutGuide type="bottom" id="o66-1L-kNZ"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="ja8-4g-KbQ">
+                <viewController id="QeW-Nu-Xjd" customClass="OCNTopicViewController" sceneMemberID="viewController">
+                    <webView key="view" contentMode="scaleToFill" scalesPageToFit="YES" id="5GU-GF-JJl">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <webView contentMode="scaleToFill" fixedFrame="YES" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zZ5-GO-lak">
-                                <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                            </webView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="gES-R0-2B7"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    </webView>
+                    <navigationItem key="navigationItem" id="c4O-n5-XfS"/>
                     <connections>
-                        <outlet property="topicWebView" destination="zZ5-GO-lak" id="7KD-e2-ifM"/>
+                        <outlet property="topicWebView" destination="5GU-GF-JJl" id="ijW-7k-0or"/>
                     </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="XIl-Z3-anM" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tbl-xP-VHN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2717" y="210"/>
         </scene>

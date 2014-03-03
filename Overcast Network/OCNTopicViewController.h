@@ -12,8 +12,8 @@
 @interface OCNTopicViewController : UIViewController <UISplitViewControllerDelegate>
 
 @property (nonatomic,strong) Topic *topic;
-@property (nonatomic,strong) IBOutlet UIWebView *topicWebView;
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
+@property (strong, nonatomic) IBOutlet UIWebView *topicWebView;
 
 - (void)refreshTopic;
 
