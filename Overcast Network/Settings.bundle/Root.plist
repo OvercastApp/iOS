@@ -28,17 +28,27 @@
 			<key>Key</key>
 			<string>image_source_preference</string>
 			<key>DefaultValue</key>
-			<string>1</string>
+			<integer>1</integer>
 			<key>Titles</key>
 			<array>
-				<string>oc.tc</string>
 				<string>maxsa.li</string>
+				<string>oc.tc</string>
 			</array>
 			<key>Values</key>
 			<array>
-				<string>0</string>
-				<string>1</string>
+				<integer>0</integer>
+				<integer>1</integer>
 			</array>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<false/>
+			<key>Key</key>
+			<string>head_image_preference</string>
+			<key>Title</key>
+			<string>Hide Heads</string>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
 		</dict>
 	</array>
 	<key>StringsTable</key>

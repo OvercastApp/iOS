@@ -13,6 +13,11 @@
 
 @interface OCNForumsViewController ()
 
+@property (nonatomic) BOOL refreshing;
+@property (nonatomic,strong) NSUserDefaults *settings;
+@property (nonatomic,strong) TopicParser *forumTopics;
+@property (nonatomic,strong) ForumParser *categoryParser;
+@property (nonatomic,strong) Forum *currentForum;
 @end
 
 @implementation OCNForumsViewController
@@ -26,22 +31,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.authorImages = [[NSMutableDictionary alloc] init];
-    self.navigationController.title = currentForum.title;
-    self.topicViewController = [[OCNTopicViewController alloc] init];
-    self.topicViewController = (OCNTopicViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
-    
-    currentForum = [[Forum alloc] init];
-    forumTopics = [[TopicParser alloc] init];
-    categoryParser = [[ForumParser alloc] init];
-    
-    [self refreshForumContent];
+    self.settings = [NSUserDefaults standardUserDefaults];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    NSLog(@"Is hiding heads: %d | Source: %d",(int)[self.settings boolForKey:@"head_image_preference"],(int)[self.settings integerForKey:@"image_source_preference"]);
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(updateUI:)
-                                                 name:@"Update"
+                                                 name:@"UpdateTopics"
                                                object:nil];
-    refreshing = false;
+    [self refreshForumContent];
+    self.refreshing = false;
 }
 
 - (void)didReceiveMemoryWarning
@@ -50,14 +48,57 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark Lazy instantiation
+
+- (NSMutableDictionary *)authorImages
+{
+    if (!_authorImages) {
+        _authorImages = [[NSMutableDictionary alloc] init];
+    }
+    return _authorImages;
+}
+
+- (OCNTopicViewController *)topicViewController
+{
+    if (!_topicViewController) {
+        _topicViewController = [[OCNTopicViewController alloc] init];
+        _topicViewController = (OCNTopicViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    }
+    return _topicViewController;
+}
+
+- (Forum *)currentForum
+{
+    if (!_currentForum) {
+        _currentForum = [[Forum alloc] init];
+    }
+    return _currentForum;
+}
+
+- (TopicParser *)forumTopics
+{
+    if (!_forumTopics) {
+        _forumTopics = [[TopicParser alloc] init];
+    }
+    return _forumTopics;
+}
+
+- (ForumParser *)categoryParser
+{
+    if (!_categoryParser) {
+        _categoryParser = [[ForumParser alloc] init];
+    }
+    return _categoryParser;
+}
+
 #pragma mark - Refreshing
 
 - (IBAction)refreshContent
 {
-    if (!refreshing) {
+    if (!self.refreshing) {
         self.categoriesButton.enabled = false;
+        self.refreshing = true;
         [self refreshForumContent];
-        refreshing = true;
     }
 }
 
@@ -67,40 +108,52 @@
     if (self.tableView.contentOffset.y == 0) {
         [self.tableView setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height) animated:YES];
     }
-    [forumTopics refreshTopicsWithURL:currentForum.url];
-    [categoryParser refreshForums];
+    [self.forumTopics refreshTopicsWithURL:self.currentForum.url];
+    [self.categoryParser refreshForums];
 }
 
 - (void)updateUI:(NSNotification *)notification
 {
-    if ([[notification name] isEqualToString:@"Update"])
-    {
-        NSLog (@"Updating UI with a total of %lu topics",(unsigned long)[forumTopics.topics count]);
-        settings = [NSUserDefaults standardUserDefaults];
-        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
-        for (Topic *topic in forumTopics.topics) {
-            dispatch_async(queue, ^(void) {
-                int index = (int)[forumTopics.topics indexOfObject:topic];
-                NSString *author = topic.author;
-                if (![self.authorImages objectForKey:author]) {
-                    NSString *sourceURL = [[settings stringForKey:@"image_source_preference"] isEqualToString:@"1"] ? [NSString stringWithFormat:@"http://ocnapp.maxsa.li/avatar.php?name=%@&size=48",author] : [NSString stringWithFormat:@"https://avatar.oc.tc/%@/48.png",author];
-                    NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:sourceURL]];
-                    UIImage* image = [[UIImage alloc] initWithData:imageData];
-                    if (image) {
-                        NSIndexPath *rowToReload = [NSIndexPath indexPathForRow:index inSection:0];
-                        NSArray *rowsToReload = [[NSArray alloc] initWithObjects:rowToReload, nil];
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            if (!refreshing) {
-                                [self.authorImages setObject:image forKey:author];
-                                [self.tableView reloadRowsAtIndexPaths:rowsToReload withRowAnimation:UITableViewRowAnimationAutomatic];
-                            }
-                        });
+    if ([[notification name] isEqualToString:@"UpdateTopics"]) {
+        NSLog(@"Updating UI with a total of %lu topics",(unsigned long)[self.forumTopics.topics count]);
+        if (![self.settings boolForKey:@"head_image_preference"]) {
+            dispatch_queue_t imageQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+            for (Topic *topic in self.forumTopics.topics) {
+                dispatch_async(imageQueue, ^(void) {
+                    int index = (int)[self.forumTopics.topics indexOfObject:topic];
+                    NSString *author = topic.author;
+                    if (![self.authorImages objectForKey:author]) {
+                        NSString *sourceURL = [[NSString alloc] init];
+                        switch ([self.settings integerForKey:@"image_source_preference"]) {
+                            case 0:
+                                sourceURL = [NSString stringWithFormat:@"http://ocnapp.maxsa.li/avatar.php?name=%@&size=48",author];
+                                break;
+                                
+                            case 1:
+                                sourceURL = [NSString stringWithFormat:@"https://avatar.oc.tc/%@/48.png",author];
+                                break;
+                        }
+                        NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:sourceURL]];
+                        UIImage* image = [[UIImage alloc] initWithData:imageData];
+                        if (image) {
+                            NSIndexPath *rowToReload = [NSIndexPath indexPathForRow:index
+                                                                          inSection:0];
+                            NSArray *rowsToReload = [[NSArray alloc] initWithObjects:rowToReload, nil];
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                if (!self.refreshing) {
+                                    [self.authorImages setObject:image
+                                                          forKey:author];
+                                    [self.tableView reloadRowsAtIndexPaths:rowsToReload
+                                                          withRowAnimation:UITableViewRowAnimationAutomatic];
+                                }
+                            });
+                        }
                     }
-                }
-            });
+                });
+            }
         }
         [self.tableView reloadData];
-        refreshing = false;
+        self.refreshing = false;
         [self.refreshWheel endRefreshing];
         self.categoriesButton.enabled = true;
     }
@@ -111,7 +164,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [forumTopics.topics count];
+    return [self.forumTopics.topics count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -136,31 +189,34 @@
     return cell;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     return 70;
 }
 
+#pragma mark Accessory methods
+
 - (NSString *)getTitleForRow:(NSUInteger)row
 {
-    return [[forumTopics.topics objectAtIndex:row] title];
+    return [[self.forumTopics.topics objectAtIndex:row] title];
 }
 
 - (NSString *)getAuthorForRow:(NSUInteger)row
 {
-    return [[forumTopics.topics objectAtIndex:row] author];
+    return [[self.forumTopics.topics objectAtIndex:row] author];
 }
 
 - (UIColor *)getColorForRow:(NSUInteger)row
 {
-    if ([[[forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"mod"]) {
+    if ([[[self.forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"mod"]) {
         return [UIColor redColor];
-    } else if ([[[forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"admin"]) {
+    } else if ([[[self.forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"admin"]) {
         return [UIColor orangeColor];
-    } else if ([[[forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"jrmod"]) {
+    } else if ([[[self.forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"jrmod"]) {
         return [UIColor colorWithRed:1.0 green:0.5 blue:0.5 alpha:1.0];
-    } else if ([[[forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"srmod"]) {
+    } else if ([[[self.forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"srmod"]) {
         return [UIColor colorWithRed:0.5 green:0.0 blue:0.0 alpha:1.0];
-    } else if ([[[forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"dev"]) {
+    } else if ([[[self.forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"dev"]) {
         return [UIColor purpleColor];
     }
     else return [UIColor blackColor];
@@ -171,8 +227,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        self.topicViewController.topic = [forumTopics.topics objectAtIndex:indexPath.row];
-        self.topicViewController.title = [[forumTopics.topics objectAtIndex:indexPath.row] title];
+        self.topicViewController.topic = [self.forumTopics.topics objectAtIndex:indexPath.row];
+        self.topicViewController.title = [[self.forumTopics.topics objectAtIndex:indexPath.row] title];
         [self.topicViewController refreshTopic];
     }
 }
@@ -196,8 +252,8 @@
                                                                     target:nil
                                                                     action:nil];
         [self.navigationItem setBackBarButtonItem:backItem];
-        tvc.topic = [forumTopics.topics objectAtIndex:[sender tag]];
-        tvc.title = [[forumTopics.topics objectAtIndex:[sender tag]] title];
+        tvc.topic = [self.forumTopics.topics objectAtIndex:[sender tag]];
+        tvc.title = [[self.forumTopics.topics objectAtIndex:[sender tag]] title];
         tvc = self.topicViewController;
     }
     // Prepare for CategoriesViewController
@@ -218,17 +274,19 @@
         categoriesViewController.currentForum = [[Forum alloc] init];
         categoriesViewController.parsedContents = [[NSArray alloc] init];
         
-        categoriesViewController.currentForum.index = currentForum.index;
-        categoriesViewController.parsedContents = categoryParser.parsedContents;
+        categoriesViewController.currentForum.index = self.currentForum.index;
+        categoriesViewController.parsedContents = self.categoryParser.parsedContents;
     }
+    NSLog(@"Segue prep done");
 }
 
-- (void)unwind:(UIStoryboardSegue *)unwindSegue {
+- (void)unwind:(UIStoryboardSegue *)unwindSegue
+{
     CategoriesViewController *category = (CategoriesViewController *)unwindSegue.sourceViewController;
-    currentForum = category.currentForum;
+    self.currentForum = category.currentForum;
     
-    self.navigationItem.title = currentForum.title;
-    refreshing = true;
+    self.navigationItem.title = self.currentForum.title;
+    self.refreshing = true;
     [self refreshForumContent];
 }
 

@@ -2,7 +2,7 @@
 //  XMLReader.m
 //  Overcast Network
 //
-//  Created by Yichen Cao credits to troybrant.net on 1/11/14.
+//  Created by Yichen Cao, credits to troybrant.net on 1/11/14.
 //  Copyright (c) 2014 Schem. All rights reserved.
 //
 
@@ -66,16 +66,12 @@ NSString *const kXMLReaderTextNodeKey = @"text";
     
     // If there’s already an item for this key, it means we need to create an array
     id existingValue = [parentDict objectForKey:elementName];
-    if (existingValue)
-    {
+    if (existingValue) {
         NSMutableArray *array = nil;
-        if ([existingValue isKindOfClass:[NSMutableArray class]])
-        {
+        if ([existingValue isKindOfClass:[NSMutableArray class]]) {
             // The array exists, so use it
             array = (NSMutableArray *) existingValue;
-        }
-        else
-        {
+        } else {
             // Create an array if it doesn’t exist
             array = [NSMutableArray array];
             [array addObject:existingValue];
@@ -83,16 +79,12 @@ NSString *const kXMLReaderTextNodeKey = @"text";
             // Replace the child dictionary with an array of children dictionaries
             [parentDict setObject:array forKey:elementName];
         }
-        
         // Add the new child dictionary to the array
         [array addObject:childDict];
-    }
-    else
-    {
+    } else {
         // No existing value, so update the dictionary
         [parentDict setObject:childDict forKey:elementName];
     }
-    
     // Update the stack
     [dictionaryStack addObject:childDict];
 }

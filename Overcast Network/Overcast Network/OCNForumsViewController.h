@@ -13,15 +13,7 @@
 
 @class OCNTopicViewController;
 
-@interface OCNForumsViewController : UITableViewController{
-    @private
-    BOOL refreshing;
-    NSUserDefaults *settings;
-    
-    TopicParser *forumTopics;
-    ForumParser *categoryParser;
-    Forum *currentForum;
-}
+@interface OCNForumsViewController : UITableViewController
 
 @property (nonatomic,weak) IBOutlet UIRefreshControl *refreshWheel;
 @property (nonatomic,strong) IBOutlet UIBarButtonItem *categoriesButton;

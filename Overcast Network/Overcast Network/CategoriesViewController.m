@@ -52,7 +52,7 @@
     if (section == 0) {
         return 1;
     }
-    return [[self.parsedContents objectAtIndex:section] count];
+    return [[[self.parsedContents objectAtIndex:section] objectForKey:@"subforum"] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

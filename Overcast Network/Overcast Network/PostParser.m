@@ -1,19 +1,20 @@
 //
-//  TopicParser.m
+//  PostParser.m
 //  Overcast Network
 //
-//  Created by Yichen Cao on 1/11/14.
+//  Created by Yichen Cao on 3/25/14.
 //  Copyright (c) 2014 Schem. All rights reserved.
 //
 
-#import "TopicParser.h"
+#import "PostParser.h"
 #import "XMLReader.h"
 
-@implementation TopicParser
+@implementation PostParser
 
-- (void)refreshTopicsWithURL:(NSString *)urlString
+- (void)refreshPostsWithURL:(NSURL *)urlString
 {
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://ocnapp.maxsa.li/topicparser.php?link=%@",urlString]];
+    NSLog(@"Refreshing Posts with URL %@", urlString);
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://ocnapp.maxsa.li/postparser.php?link=%@",urlString]];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
@@ -30,33 +31,33 @@
     [task resume];
 }
 
-#pragma mark XML Parser
-
 - (void)parseData:(NSData *)webData
 {
     self.parsedContents = [XMLReader dictionaryForXMLData:webData];
-    self.topics = [[NSMutableArray alloc] init];
-    for (NSDictionary *topic in [self.parsedContents valueForKeyPath:@"topics.topic"]) {
-        Topic *newTopic = [[Topic alloc] init];
+    self.posts = [[NSMutableArray alloc] init];
+    for (NSDictionary *post in [self.parsedContents valueForKeyPath:@"topic.post"]) {
+        NSString *author = [NSString stringWithFormat:@"%@",[post valueForKeyPath:@"author.text"]];
+        NSString *rank = [NSString stringWithFormat:@"%@",[post valueForKeyPath:@"author.rank"]];
+        NSString *lastPosted = [[[NSString stringWithFormat:@"%@",[post valueForKeyPath:@"status.text"]] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@" "];
+        NSString *content = [NSString stringWithFormat:@"%@",[post valueForKeyPath:@"content.text"]];
+        content = [[content stringByReplacingOccurrencesOfString:@"(("
+                                                      withString:@"<"]
+                   stringByReplacingOccurrencesOfString:@"))"
+                   withString:@">"];
+        Post *newPost = [Post postWithAuthor:author
+                                        rank:rank
+                                  lastPosted:lastPosted
+                                     content:content];
+        NSLog(@"Post Found: %@ %@",newPost.author,newPost.lastPosted);
         
-        newTopic.title = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"name.text"]];
-        newTopic.topicURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"link.text"]]];
-        newTopic.author = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"author.text"]];
-        newTopic.rank = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"author.rank"]];
-        newTopic.lastUpdated = nil;
-        
-        NSLog(@"Topic Found: %@ by %@",newTopic.title,newTopic.author);
-        
-        [self.topics addObject:newTopic];
+        [self.posts addObject:newPost];
     }
     [self sendRefreshUINotification:self];
 }
 
-#pragma mark Misc
-
 - (void)sendRefreshUINotification:(id)sender
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateTopics"
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdatePosts"
                                                         object:sender];
 }
 
