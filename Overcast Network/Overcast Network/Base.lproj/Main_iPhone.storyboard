@@ -91,9 +91,6 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
-                                <connections>
-                                    <segue destination="PZY-1o-UVK" kind="push" identifier="Topic" id="0zy-zv-hYw"/>
-                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -117,6 +114,7 @@
                     <connections>
                         <outlet property="categoriesButton" destination="t0Z-WM-qDF" id="Hsa-wa-cFU"/>
                         <outlet property="refreshWheel" destination="RQQ-Ox-hSZ" id="Dut-ez-uQJ"/>
+                        <segue destination="PZY-1o-UVK" kind="push" identifier="Topic" id="HbB-hV-b6W"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vr8-V9-mye" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -158,7 +156,7 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         </imageView>
                                         <webView hidden="YES" tag="4" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aZe-bu-trk" customClass="OCNPostWebView">
-                                            <rect key="frame" x="10" y="76" width="300" height="13"/>
+                                            <rect key="frame" x="10" y="76" width="300" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         </webView>
@@ -166,7 +164,7 @@
                                     <constraints>
                                         <constraint firstItem="aZe-bu-trk" firstAttribute="top" secondItem="x87-Wk-4Ib" secondAttribute="top" constant="76" id="MJt-Az-gDx"/>
                                         <constraint firstAttribute="trailing" secondItem="aZe-bu-trk" secondAttribute="trailing" constant="10" id="TM2-cW-ocw"/>
-                                        <constraint firstAttribute="bottom" secondItem="aZe-bu-trk" secondAttribute="bottom" constant="15" id="eCK-yZ-0IZ"/>
+                                        <constraint firstAttribute="bottom" secondItem="aZe-bu-trk" secondAttribute="bottom" constant="10" id="eCK-yZ-0IZ"/>
                                         <constraint firstItem="aZe-bu-trk" firstAttribute="centerX" secondItem="x87-Wk-4Ib" secondAttribute="centerX" id="ifK-i7-chk"/>
                                         <constraint firstItem="aZe-bu-trk" firstAttribute="leading" secondItem="x87-Wk-4Ib" secondAttribute="leading" constant="10" id="xNs-u9-XzX"/>
                                     </constraints>
@@ -237,24 +235,6 @@
                 <exit id="Ik4-D1-r9i" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="2525" y="-1192"/>
-        </scene>
-        <!--Topic View Controller-->
-        <scene sceneID="IWa-xG-LRb">
-            <objects>
-                <viewController id="rg7-hr-22h" customClass="OCNTopicViewController" sceneMemberID="viewController">
-                    <webView key="view" contentMode="scaleToFill" scalesPageToFit="YES" id="Yi2-lp-Dq4">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    </webView>
-                    <navigationItem key="navigationItem" id="TtR-1i-QDi"/>
-                    <connections>
-                        <outlet property="topicWebView" destination="Yi2-lp-Dq4" id="eeE-5w-uzv"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="HsM-hC-lir" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2029" y="282"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="xrD-G7-6EJ">

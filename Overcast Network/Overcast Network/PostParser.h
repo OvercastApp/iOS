@@ -13,6 +13,7 @@
 
 @property (nonatomic,strong) NSDictionary *parsedContents;
 @property (nonatomic,strong) NSMutableArray *posts;
+@property (nonatomic) int lastPage;
 
 - (void)refreshPostsWithURL:(NSString *)urlString;
 

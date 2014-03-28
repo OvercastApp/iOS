@@ -12,11 +12,17 @@
 
 @interface OCNTopicViewController ()
 
-@property (nonatomic,strong) PostParser *postParser;
-@property (nonatomic,strong) NSUserDefaults *settings;
-@property (nonatomic,strong) NSMutableDictionary *arrayOfHeights;
-@property (nonatomic,strong) NSMutableDictionary *didGetHeight;
 @property (nonatomic) BOOL refreshing;
+@property (nonatomic,strong) NSUserDefaults *userDefaults;
+
+@property (nonatomic,strong) PostParser *postParser;
+
+@property (nonatomic,strong) NSMutableDictionary *heightsOfWebViews;
+
+@property (nonatomic,strong) NSMutableArray *allPosts;
+@property (nonatomic) int currentPage;
+@property (nonatomic) int lastPage;
+@property (nonatomic) BOOL denyGetNewSection;
 
 @end
 
@@ -34,14 +40,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.settings = [NSUserDefaults standardUserDefaults];
+    self.userDefaults = [NSUserDefaults standardUserDefaults];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    NSLog(@"Is hiding heads: %d | Source: %d",(int)[self.settings boolForKey:@"head_image_preference"],(int)[self.settings integerForKey:@"image_source_preference"]);
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateUI:)
-                                                 name:@"UpdatePosts"
-                                               object:nil];
     [self refreshTopic];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [self.masterPopoverController presentPopoverFromBarButtonItem:self.navigationController.navigationBar.items[0]
+                                         permittedArrowDirections:UIPopoverArrowDirectionUnknown
+                                                         animated:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -60,94 +68,134 @@
     return _postParser;
 }
 
-- (NSMutableDictionary *)authorImages
+- (NSMutableDictionary *)heightsOfWebViews
 {
-    if (!_authorImages) {
-        _authorImages = [[NSMutableDictionary alloc] init];
+    if (!_heightsOfWebViews) {
+        _heightsOfWebViews = [[NSMutableDictionary alloc] init];
     }
-    return _authorImages;
+    return _heightsOfWebViews;
 }
 
-- (NSMutableDictionary *)arrayOfHeights
+- (NSMutableArray *)allPosts
 {
-    if (!_arrayOfHeights) {
-        _arrayOfHeights = [[NSMutableDictionary alloc] init];
+    if (!_allPosts) {
+        _allPosts = [[NSMutableArray alloc] init];
     }
-    return _arrayOfHeights;
+    return _allPosts;
 }
 
-- (NSMutableDictionary *)didGetHeight
-{
-    if (!_didGetHeight) {
-        _didGetHeight = [[NSMutableDictionary alloc] init];
+#pragma mark - Refreshing
+
+- (IBAction)refreshPulled {
+    if (self.topic) {
+        if (!self.refreshing) {
+            self.refreshing = YES;
+            [self refreshTopic];
+        }
+    } else {
+        [self.refreshControl endRefreshing];
     }
-    return _didGetHeight;
 }
 
 - (void)refreshTopic
 {
-    if (!self.refreshing) {
-        [self.masterPopoverController dismissPopoverAnimated:YES];
-        self.refreshing = true;
-        NSURL *url = self.topic.topicURL;
-        if (url != nil) {
-            [self.postParser refreshPostsWithURL:[NSString stringWithFormat:@"%@",url]];
-        }
+    //Clear out old data, begin refreshing
+    [self.refreshControl beginRefreshing];
+    self.currentPage = 0;
+    self.allPosts = nil;
+    
+    //Prep
+    if (self.tableView.contentOffset.y == 0) {
+        [self.tableView setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height) animated:YES];
+    }
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateUI:)
+                                                 name:@"UpdatePosts"
+                                               object:nil];
+    [self.masterPopoverController dismissPopoverAnimated:YES];
+    
+    //Refresh
+    NSURL *url = self.topic.topicURL;
+    if (url != nil) {
+        [self.postParser refreshPostsWithURL:[NSString stringWithFormat:@"%@",url]];
     }
 }
 
-- (IBAction)refreshPulled {
-    [self refreshTopic];
-}
-
-- (void)setRefreshing:(BOOL)refreshing
+- (void)getNewPage
 {
-    _refreshing = refreshing;
-    refreshing ? [self.refreshControl beginRefreshing] : [self.refreshControl endRefreshing];
+    self.currentPage++;
+    if (self.lastPage > self.currentPage) {
+        [self.refreshControl beginRefreshing];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(updateUI:)
+                                                     name:@"UpdatePosts"
+                                                   object:nil];
+        [self.postParser refreshPostsWithURL:[NSString stringWithFormat:@"%@?page=%i",self.topic.topicURL,(self.currentPage + 1)]];
+    } else {
+        self.currentPage--;
+        NSLog(@"Last page bro");
+    }
 }
 
 - (void)updateUI:(NSNotification *)notification
 {
     if ([[notification name] isEqualToString:@"UpdatePosts"]) {
-        [self.tableView reloadData];
-        self.refreshing = false;
-        NSLog(@"Updating UI with a total of %lu posts",(unsigned long)[self.postParser.posts count]);
-        if (![self.settings boolForKey:@"head_image_preference"]) {
-            dispatch_queue_t imageQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
-            for (Post *post in self.postParser.posts) {
-                dispatch_async(imageQueue, ^(void) {
-                    int index = (int)[self.postParser.posts indexOfObject:post];
-                    NSString *author = post.author;
-                    if (![self.authorImages objectForKey:author]) {
-                        NSString *sourceURL = [[NSString alloc] init];
-                        switch ([self.settings integerForKey:@"image_source_preference"]) {
-                            case 0:
-                                sourceURL = [NSString stringWithFormat:@"http://ocnapp.maxsa.li/avatar.php?name=%@&size=48",author];
-                                break;
-                                
-                            case 1:
-                                sourceURL = [NSString stringWithFormat:@"https://avatar.oc.tc/%@/48.png",author];
-                                break;
-                        }
-                        NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:sourceURL]];
-                        UIImage* image = [[UIImage alloc] initWithData:imageData];
-                        if (image) {
-                            NSIndexPath *rowToReload = [NSIndexPath indexPathForRow:index
-                                                                          inSection:0];
-                            NSArray *rowsToReload = [[NSArray alloc] initWithObjects:rowToReload, nil];
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                if (!self.refreshing) {
-                                    [self.authorImages setObject:image
-                                                          forKey:author];
-                                    [self.tableView reloadRowsAtIndexPaths:rowsToReload
-                                                          withRowAnimation:UITableViewRowAnimationAutomatic];
-                                }
-                            });
-                        }
-                    }
-                });
+        if (self.postParser.posts) {
+            //Move all posts for page into array with pages, clear posts
+            [self.allPosts addObject:self.postParser.posts];
+            if (self.lastPage == 0) {
+                self.lastPage = self.postParser.lastPage;
             }
+            self.postParser.posts = nil;
+            
+            //Reload all data
+            [self.tableView reloadData];
+            [[NSNotificationCenter defaultCenter] removeObserver:self];
+            NSLog(@"Updating page %i/%i with a total of %lu posts",(self.currentPage + 1),self.lastPage,(unsigned long)[self.allPosts[self.currentPage] count]);
+            
+            //Can get next page
+            self.denyGetNewSection = NO;
+            if (![self.userDefaults boolForKey:@"head_image_preference"]) {
+                [self downloadAuthorImages];
+            }
+            //No longer refreshing content
+            self.refreshing = false;
+            [self.refreshControl endRefreshing];
         }
+        else {
+            self.currentPage--;
+            self.denyGetNewSection = NO;
+        }
+    }
+}
+
+- (void)downloadAuthorImages
+{
+    dispatch_queue_t imageQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+    for (Post *post in self.allPosts[self.currentPage]) {
+        dispatch_async(imageQueue, ^(void) {
+            NSString *author = post.author;
+            if (![self.authorImages objectForKey:author]) {
+                NSString *sourceURL = [[NSString alloc] init];
+                switch ([self.userDefaults integerForKey:@"image_source_preference"]) {
+                    case 0:
+                        sourceURL = [NSString stringWithFormat:MAXSALI_AVATAR,author];
+                        break;
+                        
+                    case 1:
+                        sourceURL = [NSString stringWithFormat:OCN_AVATAR,author];
+                        break;
+                }
+                NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:sourceURL]];
+                UIImage* image = [[UIImage alloc] initWithData:imageData];
+                if (image) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.authorImages setObject:image
+                                              forKey:author];
+                    });
+                }
+            }
+        });
     }
 }
 
@@ -156,13 +204,21 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return 1;
+    return [self.allPosts count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [self.postParser.posts count];
+    if ([self.allPosts count]) {
+        return [self.allPosts[section] count];
+    }
+    return 0;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return [NSString stringWithFormat:@"Page %i",(section + 1)];
 }
 
 #define INDEX_PATH_KEY [NSString stringWithFormat:@"%i,%i",indexPath.section,indexPath.row]
@@ -178,31 +234,36 @@
     UILabel *lastPosted = (UILabel *)[cell.contentView viewWithTag:3];
     OCNPostWebView *contentWebView = (OCNPostWebView *)[cell.contentView viewWithTag:4];
     
-    if ([self.authorImages objectForKey:[self getAuthorForRow:indexPath.row]]) {
-        authorImage.image = [[self.authorImages objectForKey:[self getAuthorForRow:indexPath.row]] imageWithRoundedCornersRadius:5];
+
+    NSString *authorName = [self getAuthorForIndexPath:indexPath];
+    //If there is image, get image, else do nothing.
+    if ([self.authorImages objectForKey:authorName]) {
+        authorImage.image = [[self.authorImages objectForKey:authorName] imageWithRoundedCornersRadius:5];
     }
-    author.text = [NSString stringWithFormat:@"%@%@",[self getAuthorForRow:indexPath.row],@""];
-    author.textColor = [self getColorForRow:indexPath.row];
-    lastPosted.text = [self getLastPostedForRow:indexPath.row];
     
+    //Get author name, color, last posted date
+    author.text = [NSString stringWithFormat:@"%@%@",authorName,@""];
+    author.textColor = [self getColorForIndexPath:indexPath];
+    lastPosted.text = [self getLastPostedForIndexPath:indexPath];
+    
+    //Get content of post, check for height once, load HTML every time.
     [contentWebView setDelegate:nil];
-    if (![self.didGetHeight objectForKey:INDEX_PATH_KEY]) {
-        [self.didGetHeight setObject:[NSNumber numberWithBool:YES]
-                                forKey:INDEX_PATH_KEY];
+    if (![self.heightsOfWebViews objectForKey:INDEX_PATH_KEY]) {
         [contentWebView setDelegate:self];
         contentWebView.scrollView.scrollEnabled = false;
         contentWebView.postIndex = indexPath;
     }
-    [contentWebView loadHTMLString:[self getHTMLString:indexPath.row] baseURL:nil];
+    [contentWebView loadHTMLString:[self getHTMLStringForIndexPath:indexPath] baseURL:nil];
+    
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (![self.arrayOfHeights objectForKey:INDEX_PATH_KEY]) {
+    if (![self.heightsOfWebViews objectForKey:INDEX_PATH_KEY]) {
         return 100;
     } else {
-        return 85 + [[self.arrayOfHeights objectForKey:INDEX_PATH_KEY] intValue];
+        return 80 + [[self.heightsOfWebViews objectForKey:INDEX_PATH_KEY] intValue];
     }
 }
 
@@ -210,10 +271,9 @@
 
 - (void)webViewDidFinishLoad:(OCNPostWebView *)webView
 {
-    NSLog(@"%@ finished loading :-)",WEB_VIEW_KEY);
-    if (![self.arrayOfHeights objectForKey:WEB_VIEW_KEY]) {
+    if (![self.heightsOfWebViews objectForKey:WEB_VIEW_KEY]) {
         int height = [self checkHeightFromWebView:webView];
-        [self.arrayOfHeights setObject:[NSNumber numberWithInt:height]
+        [self.heightsOfWebViews setObject:[NSNumber numberWithInt:height]
                                 forKey:WEB_VIEW_KEY];
     }
     [webView setHidden:NO];
@@ -237,48 +297,50 @@
 }
 
 #pragma mark Accessory methods
-- (NSString *)getAuthorForRow:(NSUInteger)row
+- (NSString *)getAuthorForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[self.postParser.posts objectAtIndex:row] author];
+    return [[self.allPosts[indexPath.section] objectAtIndex:indexPath.row] author];
 }
 
-- (UIColor *)getColorForRow:(NSUInteger)row
+- (UIColor *)getColorForIndexPath:(NSIndexPath *)indexPath
 {
-    if ([[[self.postParser.posts objectAtIndex:row] rank] isEqualToString:@"mod"]) {
+    NSString *rank = [[self.allPosts[indexPath.section] objectAtIndex:indexPath.row] rank];
+    if ([rank isEqualToString:@"mod"]) {
         return [UIColor redColor];
-    } else if ([[[self.postParser.posts objectAtIndex:row] rank] isEqualToString:@"admin"]) {
+    } else if ([rank isEqualToString:@"admin"]) {
         return [UIColor orangeColor];
-    } else if ([[[self.postParser.posts objectAtIndex:row] rank] isEqualToString:@"jrmod"]) {
+    } else if ([rank isEqualToString:@"jrmod"]) {
         return [UIColor colorWithRed:1.0 green:0.5 blue:0.5 alpha:1.0];
-    } else if ([[[self.postParser.posts objectAtIndex:row] rank] isEqualToString:@"srmod"]) {
+    } else if ([rank isEqualToString:@"srmod"]) {
         return [UIColor colorWithRed:0.5 green:0.0 blue:0.0 alpha:1.0];
-    } else if ([[[self.postParser.posts objectAtIndex:row] rank] isEqualToString:@"dev"]) {
+    } else if ([rank isEqualToString:@"dev"]) {
         return [UIColor purpleColor];
     }
     else return [UIColor blackColor];
 }
 
-- (NSString *)getLastPostedForRow:(NSUInteger)row
+- (NSString *)getLastPostedForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[self.postParser.posts objectAtIndex:row] lastPosted];
+    return [[self.allPosts[indexPath.section] objectAtIndex:indexPath.row] lastPosted];
 }
 
-- (NSString *)getContentForRow:(NSUInteger)row
+- (NSString *)getContentForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[self.postParser.posts objectAtIndex:row] content];
+    return [[self.allPosts[indexPath.section] objectAtIndex:indexPath.row] content];
 }
 
-- (NSString *)getHTMLString:(NSUInteger)row
+- (NSString *)getHTMLStringForIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *HTMLString = [self getContentForRow:row];
+    NSString *HTMLString = [self getContentForIndexPath:indexPath];
     HTMLString = [NSString stringWithFormat:@"<font face='Helvetica' size='2'><p>%@</p>",HTMLString];
     //Add custom tags here!
     HTMLString = [HTMLString stringByReplacingOccurrencesOfString:@"<br/>" withString:@"<br>"];
     HTMLString = [HTMLString stringByReplacingOccurrencesOfString:@" Â " withString:@" "];
+    HTMLString = [HTMLString stringByReplacingOccurrencesOfString:@"Â" withString:@""];
     HTMLString = [HTMLString stringByReplacingOccurrencesOfString:@"<img" withString:@"<img width=\"100%\""];
+    HTMLString = [HTMLString stringByReplacingOccurrencesOfString:@"<(" withString:@"(< "];
     return HTMLString;
 }
-
 /*
 #pragma mark - Navigation
 
@@ -289,6 +351,23 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+#pragma mark - Table view delegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    CGFloat height = scrollView.frame.size.height;
+    CGFloat contentYoffset = scrollView.contentOffset.y;
+    CGFloat distanceFromBottom = scrollView.contentSize.height - contentYoffset;
+    
+    if(distanceFromBottom <= height && !self.refreshing && [self.allPosts count] >= 1) {
+        if (!self.denyGetNewSection) {
+            self.denyGetNewSection = YES;
+            [self getNewPage];
+        }
+    }
+}
+
 #pragma mark - Split view
 
 - (void)splitViewController:(UISplitViewController *)svc popoverController:(UIPopoverController *)pc willPresentViewController:(UIViewController *)aViewController

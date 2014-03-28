@@ -8,6 +8,7 @@
 
 #import "TopicParser.h"
 #import "XMLReader.h"
+#import "Alerts.h"
 
 @implementation TopicParser
 
@@ -23,7 +24,8 @@
                                                         dispatch_async(dispatch_get_main_queue(), ^{
                                                             if (error) {
                                                                 NSLog(@"Retrieving forum source failed with error: \n%@", error);
-                                                                [self sendFailedAlert];
+                                                                [self sendRefreshUINotification:self];
+                                                                [Alerts sendConnectionFaliureAlert];
                                                             } else [self parseData:xmlData];
                                                         });
                                                     }];
@@ -44,9 +46,6 @@
         newTopic.author = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"author.text"]];
         newTopic.rank = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"author.rank"]];
         newTopic.lastUpdated = nil;
-        
-        NSLog(@"Topic Found: %@ by %@",newTopic.title,newTopic.author);
-        
         [self.topics addObject:newTopic];
     }
     [self sendRefreshUINotification:self];
@@ -58,17 +57,6 @@
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateTopics"
                                                         object:sender];
-}
-
-- (void)sendFailedAlert
-{
-    UIAlertView *failedAlert = [[UIAlertView alloc] initWithTitle:@"Cannot Refresh Content"
-                                                          message:@"Check your internet connection please :D"
-                                                         delegate:nil
-                                                cancelButtonTitle:nil
-                                                otherButtonTitles:@"I'll fix it!", nil];
-    [failedAlert show];
-    [self sendRefreshUINotification:self];
 }
 
 @end

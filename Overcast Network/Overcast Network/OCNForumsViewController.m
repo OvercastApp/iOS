@@ -14,10 +14,16 @@
 @interface OCNForumsViewController ()
 
 @property (nonatomic) BOOL refreshing;
-@property (nonatomic,strong) NSUserDefaults *settings;
-@property (nonatomic,strong) TopicParser *forumTopics;
+@property (nonatomic,strong) NSUserDefaults *userDefaults;
+
+@property (nonatomic,strong) TopicParser *topicParser;
 @property (nonatomic,strong) ForumParser *categoryParser;
 @property (nonatomic,strong) Forum *currentForum;
+
+@property (nonatomic,strong) NSMutableArray *allTopics;
+@property (nonatomic) int currentPage;
+@property (nonatomic) BOOL denyGetNewSection;
+
 @end
 
 @implementation OCNForumsViewController
@@ -31,15 +37,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.settings = [NSUserDefaults standardUserDefaults];
+    self.userDefaults = [NSUserDefaults standardUserDefaults];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    NSLog(@"Is hiding heads: %d | Source: %d",(int)[self.settings boolForKey:@"head_image_preference"],(int)[self.settings integerForKey:@"image_source_preference"]);
+    NSLog(@"Is hiding heads: %d | Source: %d",(int)[self.userDefaults boolForKey:@"head_image_preference"],(int)[self.userDefaults integerForKey:@"image_source_preference"]);
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(updateUI:)
                                                  name:@"UpdateTopics"
                                                object:nil];
     [self refreshForumContent];
-    self.refreshing = false;
 }
 
 - (void)didReceiveMemoryWarning
@@ -62,7 +67,9 @@
 {
     if (!_topicViewController) {
         _topicViewController = [[OCNTopicViewController alloc] init];
-        _topicViewController = (OCNTopicViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            _topicViewController = (OCNTopicViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+        }
     }
     return _topicViewController;
 }
@@ -75,12 +82,12 @@
     return _currentForum;
 }
 
-- (TopicParser *)forumTopics
+- (TopicParser *)topicParser
 {
-    if (!_forumTopics) {
-        _forumTopics = [[TopicParser alloc] init];
+    if (!_topicParser) {
+        _topicParser = [[TopicParser alloc] init];
     }
-    return _forumTopics;
+    return _topicParser;
 }
 
 - (ForumParser *)categoryParser
@@ -91,80 +98,133 @@
     return _categoryParser;
 }
 
+- (NSMutableArray *)allTopics
+{
+    if (!_allTopics) {
+        _allTopics = [[NSMutableArray alloc] init];
+    }
+    return _allTopics;
+}
+
 #pragma mark - Refreshing
 
 - (IBAction)refreshContent
 {
     if (!self.refreshing) {
-        self.categoriesButton.enabled = false;
-        self.refreshing = true;
+        self.categoriesButton.enabled = NO;
+        self.refreshing = YES;
         [self refreshForumContent];
     }
 }
 
 - (void)refreshForumContent
 {
+    //Clear out old data, begin refreshing
     [self.refreshWheel beginRefreshing];
+    self.currentPage = 0;
+    self.allTopics = nil;
+    
+    //Prep
     if (self.tableView.contentOffset.y == 0) {
         [self.tableView setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height) animated:YES];
     }
-    [self.forumTopics refreshTopicsWithURL:self.currentForum.url];
+    
+    //Refresh
+    [self.topicParser refreshTopicsWithURL:self.currentForum.url];
     [self.categoryParser refreshForums];
+}
+
+- (void)getNewPage
+{
+    self.currentPage++;
+    [self.refreshWheel beginRefreshing];
+    [self.topicParser refreshTopicsWithURL:[NSString stringWithFormat:@"%@?page=%i",self.currentForum.url,(self.currentPage + 1)]];
 }
 
 - (void)updateUI:(NSNotification *)notification
 {
     if ([[notification name] isEqualToString:@"UpdateTopics"]) {
-        NSLog(@"Updating UI with a total of %lu topics",(unsigned long)[self.forumTopics.topics count]);
-        if (![self.settings boolForKey:@"head_image_preference"]) {
-            dispatch_queue_t imageQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
-            for (Topic *topic in self.forumTopics.topics) {
-                dispatch_async(imageQueue, ^(void) {
-                    int index = (int)[self.forumTopics.topics indexOfObject:topic];
-                    NSString *author = topic.author;
-                    if (![self.authorImages objectForKey:author]) {
-                        NSString *sourceURL = [[NSString alloc] init];
-                        switch ([self.settings integerForKey:@"image_source_preference"]) {
-                            case 0:
-                                sourceURL = [NSString stringWithFormat:@"http://ocnapp.maxsa.li/avatar.php?name=%@&size=48",author];
-                                break;
-                                
-                            case 1:
-                                sourceURL = [NSString stringWithFormat:@"https://avatar.oc.tc/%@/48.png",author];
-                                break;
-                        }
-                        NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:sourceURL]];
-                        UIImage* image = [[UIImage alloc] initWithData:imageData];
-                        if (image) {
-                            NSIndexPath *rowToReload = [NSIndexPath indexPathForRow:index
-                                                                          inSection:0];
-                            NSArray *rowsToReload = [[NSArray alloc] initWithObjects:rowToReload, nil];
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                if (!self.refreshing) {
-                                    [self.authorImages setObject:image
-                                                          forKey:author];
-                                    [self.tableView reloadRowsAtIndexPaths:rowsToReload
-                                                          withRowAnimation:UITableViewRowAnimationAutomatic];
-                                }
-                            });
-                        }
-                    }
-                });
+        if (self.topicParser.topics) {
+            //Move all topics for page into array with pages, clear topics
+            [self.allTopics addObject:self.topicParser.topics];
+            self.topicParser.topics = nil;
+            
+            //Reload all data
+            [self.tableView reloadData];
+            NSLog(@"Updating page %i with a total of %lu topics",(self.currentPage + 1),(unsigned long)[self.allTopics[self.currentPage] count]);
+            
+            //Can get next page
+            self.denyGetNewSection = NO;
+            if (![self.userDefaults boolForKey:@"head_image_preference"]) {
+                [self downloadAuthorImages];
             }
+            //No longer refreshing content
+            self.refreshing = false;
+            [self.refreshWheel endRefreshing];
+            self.categoriesButton.enabled = true;
         }
-        [self.tableView reloadData];
-        self.refreshing = false;
-        [self.refreshWheel endRefreshing];
-        self.categoriesButton.enabled = true;
+    }
+}
+
+- (void)downloadAuthorImages
+{
+    dispatch_queue_t imageQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+    for (Topic *topic in self.allTopics[self.currentPage]) {
+        dispatch_async(imageQueue, ^(void) {
+            int index = (int)[self.allTopics[self.currentPage] indexOfObject:topic];
+            int section = self.currentPage;
+            NSString *author = topic.author;
+            if (![self.authorImages objectForKey:author]) {
+                NSString *sourceURL = [[NSString alloc] init];
+                switch ([self.userDefaults integerForKey:@"image_source_preference"]) {
+                    case 0:
+                        sourceURL = [NSString stringWithFormat:MAXSALI_AVATAR,author];
+                        break;
+                        
+                    case 1:
+                        sourceURL = [NSString stringWithFormat:OCN_AVATAR,author];
+                        break;
+                }
+                NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:sourceURL]];
+                UIImage* image = [[UIImage alloc] initWithData:imageData];
+                if (image) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.authorImages setObject:image
+                                              forKey:author];
+                        if (!self.refreshing) {
+                            NSIndexPath *rowToReload = [NSIndexPath indexPathForRow:index
+                                                                          inSection:section];
+                            NSArray *rowsToReload = [[NSArray alloc] initWithObjects:rowToReload, nil];
+                            [self.tableView reloadRowsAtIndexPaths:rowsToReload
+                                                  withRowAnimation:UITableViewRowAnimationAutomatic];
+                        }
+                    });
+                }
+            }
+        });
     }
 }
 
 #pragma mark - Table view data source
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    // Return the number of sections.
+    return [self.allTopics count];
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [self.forumTopics.topics count];
+    if ([self.allTopics count]) {
+        return [self.allTopics[section] count];
+    }
+    return 0;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return [NSString stringWithFormat:@"Page %i",(section + 1)];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -172,19 +232,18 @@
     static NSString *CellIdentifier = @"Forum Topic Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-    cell.imageView.image = nil;
-    if ([self.authorImages objectForKey:[self getAuthorForRow:indexPath.row]]) {
-        UIImage *image = [self.authorImages objectForKey:[self getAuthorForRow:indexPath.row]];
+    if ([self.authorImages objectForKey:[self getAuthorForIndexPath:indexPath]]) {
+        UIImage *image = [self.authorImages objectForKey:[self getAuthorForIndexPath:indexPath]];
         cell.imageView.image = [image imageWithRoundedCornersRadius:5];
     }
     cell.tag = indexPath.row;
     
-    cell.textLabel.text = [self getTitleForRow:indexPath.row];
+    cell.textLabel.text = [self getTitleForIndexPath:indexPath];
     cell.textLabel.font = [UIFont systemFontOfSize:16];
     
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@%@",[self getAuthorForRow:indexPath.row],@""];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@%@",[self getAuthorForIndexPath:indexPath],@""];
     cell.detailTextLabel.font = [UIFont boldSystemFontOfSize:12];
-    cell.detailTextLabel.textColor = [self getColorForRow:indexPath.row];
+    cell.detailTextLabel.textColor = [self getColorForIndexPath:indexPath];
     
     return cell;
 }
@@ -196,27 +255,28 @@
 
 #pragma mark Accessory methods
 
-- (NSString *)getTitleForRow:(NSUInteger)row
+- (NSString *)getTitleForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[self.forumTopics.topics objectAtIndex:row] title];
+    return [[self.allTopics[indexPath.section] objectAtIndex:indexPath.row] title];
 }
 
-- (NSString *)getAuthorForRow:(NSUInteger)row
+- (NSString *)getAuthorForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[self.forumTopics.topics objectAtIndex:row] author];
+    return [[self.allTopics[indexPath.section] objectAtIndex:indexPath.row] author];
 }
 
-- (UIColor *)getColorForRow:(NSUInteger)row
+- (UIColor *)getColorForIndexPath:(NSIndexPath *)indexPath
 {
-    if ([[[self.forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"mod"]) {
+    NSString *rank = [[self.allTopics[indexPath.section] objectAtIndex:indexPath.row] rank];
+    if ([rank isEqualToString:@"mod"]) {
         return [UIColor redColor];
-    } else if ([[[self.forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"admin"]) {
+    } else if ([rank isEqualToString:@"admin"]) {
         return [UIColor orangeColor];
-    } else if ([[[self.forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"jrmod"]) {
+    } else if ([rank isEqualToString:@"jrmod"]) {
         return [UIColor colorWithRed:1.0 green:0.5 blue:0.5 alpha:1.0];
-    } else if ([[[self.forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"srmod"]) {
+    } else if ([rank isEqualToString:@"srmod"]) {
         return [UIColor colorWithRed:0.5 green:0.0 blue:0.0 alpha:1.0];
-    } else if ([[[self.forumTopics.topics objectAtIndex:row] rank] isEqualToString:@"dev"]) {
+    } else if ([rank isEqualToString:@"dev"]) {
         return [UIColor purpleColor];
     }
     else return [UIColor blackColor];
@@ -226,11 +286,43 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    self.topicViewController.topic = [self.allTopics[indexPath.section] objectAtIndex:indexPath.row];
+    self.topicViewController.title = [[self.allTopics[indexPath.section] objectAtIndex:indexPath.row] title];
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        self.topicViewController.topic = [self.forumTopics.topics objectAtIndex:indexPath.row];
-        self.topicViewController.title = [[self.forumTopics.topics objectAtIndex:indexPath.row] title];
+        self.topicViewController.authorImages = self.authorImages;
         [self.topicViewController refreshTopic];
+    } else {
+        [self performSegueWithIdentifier:@"Topic" sender:self];
     }
+    if (self.topicPopoverController) {
+        [self.topicPopoverController dismissPopoverAnimated:YES];
+    }
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    CGFloat height = scrollView.frame.size.height;
+    CGFloat contentYoffset = scrollView.contentOffset.y;
+    CGFloat distanceFromBottom = scrollView.contentSize.height - contentYoffset;
+    
+    if(distanceFromBottom <= height && !self.refreshing && [self.allTopics count] >= 1) {
+        if (!self.denyGetNewSection) {
+            self.denyGetNewSection = YES;
+            [self getNewPage];
+        }
+    }
+}
+
+#pragma mark - Split view delegate
+
+- (void)splitViewController:(UISplitViewController *)svc willHideViewController:(UIViewController *)aViewController withBarButtonItem:(UIBarButtonItem *)barButtonItem forPopoverController:(UIPopoverController *)pc
+{
+    self.topicPopoverController = pc;
+}
+
+- (void)splitViewController:(UISplitViewController *)svc willShowViewController:(UIViewController *)aViewController invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
+{
+    self.topicPopoverController = nil;
 }
 
 #pragma mark - Segue Preparation
@@ -252,13 +344,13 @@
                                                                     target:nil
                                                                     action:nil];
         [self.navigationItem setBackBarButtonItem:backItem];
-        tvc.topic = [self.forumTopics.topics objectAtIndex:[sender tag]];
-        tvc.title = [[self.forumTopics.topics objectAtIndex:[sender tag]] title];
-        tvc = self.topicViewController;
+        tvc.topic = self.topicViewController.topic;
+        tvc.title = self.topicViewController.title;
+        tvc.authorImages = self.authorImages;
     }
     // Prepare for CategoriesViewController
     else if ([segue.identifier isEqualToString:@"Category"]) {
-        CategoriesViewController *categoriesViewController = [[CategoriesViewController alloc] init];
+        CategoriesViewController *categoriesViewController;
         
         if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
             // Phone
@@ -277,7 +369,6 @@
         categoriesViewController.currentForum.index = self.currentForum.index;
         categoriesViewController.parsedContents = self.categoryParser.parsedContents;
     }
-    NSLog(@"Segue prep done");
 }
 
 - (void)unwind:(UIStoryboardSegue *)unwindSegue

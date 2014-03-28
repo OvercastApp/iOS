@@ -122,7 +122,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="QeW-Nu-Xjd" kind="relationship" relationship="rootViewController" id="Yt2-ze-SAg"/>
+                        <segue destination="deZ-rF-meJ" kind="relationship" relationship="rootViewController" id="59a-Zt-Xxo"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="th7-GJ-3di" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -161,20 +161,69 @@
             <point key="canvasLocation" x="898" y="210"/>
         </scene>
         <!--Topic View Controller-->
-        <scene sceneID="tnk-Uz-hMl">
+        <scene sceneID="dEu-Eo-dcf">
             <objects>
-                <viewController id="QeW-Nu-Xjd" customClass="OCNTopicViewController" sceneMemberID="viewController">
-                    <webView key="view" contentMode="scaleToFill" scalesPageToFit="YES" id="5GU-GF-JJl">
+                <tableViewController id="deZ-rF-meJ" customClass="OCNTopicViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="105" sectionHeaderHeight="22" sectionFooterHeight="22" id="rJ1-es-Edc">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    </webView>
-                    <navigationItem key="navigationItem" id="c4O-n5-XfS"/>
-                    <connections>
-                        <outlet property="topicWebView" destination="5GU-GF-JJl" id="ijW-7k-0or"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="tbl-xP-VHN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Post" rowHeight="105" id="mb1-gg-ddS">
+                                <rect key="frame" x="0.0" y="86" width="768" height="105"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mb1-gg-ddS" id="FOW-ys-3EB">
+                                    <rect key="frame" x="0.0" y="0.0" width="768" height="104"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" tag="2" contentMode="left" fixedFrame="YES" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YXD-ze-MIh">
+                                            <rect key="frame" x="76" y="25" width="224" height="22"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" tag="3" contentMode="left" fixedFrame="YES" text="Posted x minutes ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mUP-ae-KnB">
+                                            <rect key="frame" x="76" y="47" width="224" height="15"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <imageView userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nxQ-tU-5Ya">
+                                            <rect key="frame" x="20" y="20" width="48" height="48"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
+                                        <webView hidden="YES" tag="4" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XGw-Si-Uzh" customClass="OCNPostWebView">
+                                            <rect key="frame" x="10" y="76" width="748" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </webView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="XGw-Si-Uzh" firstAttribute="centerX" secondItem="FOW-ys-3EB" secondAttribute="centerX" id="5Ze-dl-LPO"/>
+                                        <constraint firstAttribute="trailing" secondItem="XGw-Si-Uzh" secondAttribute="trailing" constant="10" id="SC7-Zm-nUr"/>
+                                        <constraint firstItem="XGw-Si-Uzh" firstAttribute="top" secondItem="FOW-ys-3EB" secondAttribute="top" constant="76" id="UZ0-wX-sI1"/>
+                                        <constraint firstAttribute="bottom" secondItem="XGw-Si-Uzh" secondAttribute="bottom" constant="10" id="k5R-YA-dL3"/>
+                                        <constraint firstItem="XGw-Si-Uzh" firstAttribute="leading" secondItem="FOW-ys-3EB" secondAttribute="leading" constant="10" id="mFa-4k-kBC"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="deZ-rF-meJ" id="Nfj-sB-cTI"/>
+                            <outlet property="delegate" destination="deZ-rF-meJ" id="L7e-Xf-36S"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="ZJp-A8-IWh"/>
+                    <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="ev3-kj-eT6">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <connections>
+                            <action selector="refreshPulled" destination="deZ-rF-meJ" eventType="valueChanged" id="x9S-yM-yHF"/>
+                        </connections>
+                    </refreshControl>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Mlz-Ni-0nu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2717" y="210"/>
         </scene>

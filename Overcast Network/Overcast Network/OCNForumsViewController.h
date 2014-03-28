@@ -11,16 +11,19 @@
 #import "ForumParser.h"
 #import "Forum.h"
 
+#define MAXSALI_AVATAR @"http://ocnapp.maxsa.li/avatar.php?name=%@&size=48"
+#define OCN_AVATAR @"https://avatar.oc.tc/%@/48.png"
+
 @class OCNTopicViewController;
 
-@interface OCNForumsViewController : UITableViewController
+@interface OCNForumsViewController : UITableViewController <UISplitViewControllerDelegate>
 
 @property (nonatomic,weak) IBOutlet UIRefreshControl *refreshWheel;
 @property (nonatomic,strong) IBOutlet UIBarButtonItem *categoriesButton;
 @property (nonatomic,strong) NSMutableDictionary *authorImages;
 @property (nonatomic,weak) UIPopoverController *categoriesPopover;
-
 @property (nonatomic,strong) OCNTopicViewController *topicViewController;
+@property (retain, nonatomic) UIPopoverController *topicPopoverController;
 
 - (IBAction)refreshContent;
 

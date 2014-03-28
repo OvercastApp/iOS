@@ -14,6 +14,7 @@
 {
     Post *newPost = [[Post alloc] init];
     newPost.author = author;
+    newPost.rank = rank;
     newPost.lastPosted = lastPosted;
     newPost.content = content;
     return newPost;

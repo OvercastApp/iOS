@@ -28,6 +28,7 @@
 		5F3EA87318E1B37B00900351 /* Topic.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA87218E1B37B00900351 /* Topic.m */; };
 		5F3EA87618E1B68900900351 /* Post.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA87518E1B68900900351 /* Post.m */; };
 		5F3EA90F18E3B66100900351 /* OCNPostWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA90E18E3B66100900351 /* OCNPostWebView.m */; };
+		5F3EA91718E5418500900351 /* Alerts.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA91618E5418500900351 /* Alerts.m */; };
 		5F5D01C418D1F74900727B7A /* OCNServersPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5D01C318D1F74900727B7A /* OCNServersPageViewController.m */; };
 		5FA1280F18811D3B00EAEDE0 /* TopicParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1280E18811D3B00EAEDE0 /* TopicParser.m */; };
 		5FA128181881204A00EAEDE0 /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA128171881204A00EAEDE0 /* XMLReader.m */; };
@@ -80,6 +81,8 @@
 		5F3EA87518E1B68900900351 /* Post.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Post.m; sourceTree = "<group>"; };
 		5F3EA90D18E3B66100900351 /* OCNPostWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCNPostWebView.h; sourceTree = "<group>"; };
 		5F3EA90E18E3B66100900351 /* OCNPostWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCNPostWebView.m; sourceTree = "<group>"; };
+		5F3EA91518E5418500900351 /* Alerts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alerts.h; sourceTree = "<group>"; };
+		5F3EA91618E5418500900351 /* Alerts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Alerts.m; sourceTree = "<group>"; };
 		5F5D01C218D1F74900727B7A /* OCNServersPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCNServersPageViewController.h; sourceTree = "<group>"; };
 		5F5D01C318D1F74900727B7A /* OCNServersPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCNServersPageViewController.m; sourceTree = "<group>"; };
 		5FA1280D18811D3B00EAEDE0 /* TopicParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopicParser.h; sourceTree = "<group>"; };
@@ -211,7 +214,7 @@
 				5FA1282518818A9300EAEDE0 /* CategoriesViewController.h */,
 				5FA1282618818A9300EAEDE0 /* CategoriesViewController.m */,
 				5FA1282E18818F5D00EAEDE0 /* Model */,
-				5FA1282F18818F8B00EAEDE0 /* External Classes */,
+				5FA1282F18818F8B00EAEDE0 /* Shared Classes */,
 			);
 			name = Forums;
 			sourceTree = "<group>";
@@ -267,15 +270,17 @@
 			name = Model;
 			sourceTree = "<group>";
 		};
-		5FA1282F18818F8B00EAEDE0 /* External Classes */ = {
+		5FA1282F18818F8B00EAEDE0 /* Shared Classes */ = {
 			isa = PBXGroup;
 			children = (
+				5F3EA91518E5418500900351 /* Alerts.h */,
+				5F3EA91618E5418500900351 /* Alerts.m */,
 				5FA128161881204A00EAEDE0 /* XMLReader.h */,
 				5FA128171881204A00EAEDE0 /* XMLReader.m */,
 				5FA24E71187C27D4002D83E5 /* UIImage+RoundedCorner.h */,
 				5FA24E72187C27D4002D83E5 /* UIImage+RoundedCorner.m */,
 			);
-			name = "External Classes";
+			name = "Shared Classes";
 			sourceTree = "<group>";
 		};
 		5FF7216F187ECF530099271B /* Profile */ = {
@@ -395,6 +400,7 @@
 				5F3EA87018E1B34300900351 /* PostParser.m in Sources */,
 				5F3EA87318E1B37B00900351 /* Topic.m in Sources */,
 				5F06EFAD1876655200D2C1B4 /* main.m in Sources */,
+				5F3EA91718E5418500900351 /* Alerts.m in Sources */,
 				5FA1283218823C9C00EAEDE0 /* Forum.m in Sources */,
 				5FA1280F18811D3B00EAEDE0 /* TopicParser.m in Sources */,
 				5F06EFB11876655200D2C1B4 /* OCNAppDelegate.m in Sources */,
@@ -545,7 +551,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Overcast Network/Overcast Network-Prefix.pch";
 				INFOPLIST_FILE = "Overcast Network/Overcast Network-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = Overcast;
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -562,7 +568,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Overcast Network/Overcast Network-Prefix.pch";
 				INFOPLIST_FILE = "Overcast Network/Overcast Network-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = Overcast;
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
