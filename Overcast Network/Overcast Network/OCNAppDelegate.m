@@ -13,6 +13,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        /*
         UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
         UITabBar *tabBar = tabBarController.tabBar;
         UITabBarItem *tabBarItem1 = [tabBar.items objectAtIndex:0];
@@ -25,6 +26,7 @@
         tabBarItem2.selectedImage = [[UIImage imageNamed:@"ProfileSelected.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
         tabBarItem2.image = [[UIImage imageNamed:@"Profile.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
         tabBarItem2.title = @"Profile";
+        */
     }
 
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {

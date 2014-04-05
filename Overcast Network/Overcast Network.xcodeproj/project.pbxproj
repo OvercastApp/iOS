@@ -29,6 +29,9 @@
 		5F3EA87618E1B68900900351 /* Post.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA87518E1B68900900351 /* Post.m */; };
 		5F3EA90F18E3B66100900351 /* OCNPostWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA90E18E3B66100900351 /* OCNPostWebView.m */; };
 		5F3EA91718E5418500900351 /* Alerts.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA91618E5418500900351 /* Alerts.m */; };
+		5F3EA91A18E5A88500900351 /* OCNLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA91918E5A88500900351 /* OCNLoginViewController.m */; };
+		5F3EA96218E6DEBA00900351 /* NSMutableArray+ReverseArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA96118E6DEBA00900351 /* NSMutableArray+ReverseArray.m */; };
+		5F3EA96418E7E8F300900351 /* appicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3EA96318E7E8F300900351 /* appicon.png */; };
 		5F5D01C418D1F74900727B7A /* OCNServersPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5D01C318D1F74900727B7A /* OCNServersPageViewController.m */; };
 		5FA1280F18811D3B00EAEDE0 /* TopicParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1280E18811D3B00EAEDE0 /* TopicParser.m */; };
 		5FA128181881204A00EAEDE0 /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA128171881204A00EAEDE0 /* XMLReader.m */; };
@@ -83,6 +86,11 @@
 		5F3EA90E18E3B66100900351 /* OCNPostWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCNPostWebView.m; sourceTree = "<group>"; };
 		5F3EA91518E5418500900351 /* Alerts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alerts.h; sourceTree = "<group>"; };
 		5F3EA91618E5418500900351 /* Alerts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Alerts.m; sourceTree = "<group>"; };
+		5F3EA91818E5A88500900351 /* OCNLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCNLoginViewController.h; sourceTree = "<group>"; };
+		5F3EA91918E5A88500900351 /* OCNLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCNLoginViewController.m; sourceTree = "<group>"; };
+		5F3EA96018E6DEBA00900351 /* NSMutableArray+ReverseArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+ReverseArray.h"; sourceTree = "<group>"; };
+		5F3EA96118E6DEBA00900351 /* NSMutableArray+ReverseArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+ReverseArray.m"; sourceTree = "<group>"; };
+		5F3EA96318E7E8F300900351 /* appicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = appicon.png; path = ../appicon.png; sourceTree = "<group>"; };
 		5F5D01C218D1F74900727B7A /* OCNServersPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCNServersPageViewController.h; sourceTree = "<group>"; };
 		5F5D01C318D1F74900727B7A /* OCNServersPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCNServersPageViewController.m; sourceTree = "<group>"; };
 		5FA1280D18811D3B00EAEDE0 /* TopicParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopicParser.h; sourceTree = "<group>"; };
@@ -167,6 +175,7 @@
 				5FF7216F187ECF530099271B /* Profile */,
 				5F5D01C518D1F75500727B7A /* Servers */,
 				5F06EFBB1876655200D2C1B4 /* Images.xcassets */,
+				5F3EA96318E7E8F300900351 /* appicon.png */,
 				5F06EFA71876655200D2C1B4 /* Supporting Files */,
 			);
 			path = "Overcast Network";
@@ -204,6 +213,9 @@
 		5F06EFE41876A13400D2C1B4 /* Forums */ = {
 			isa = PBXGroup;
 			children = (
+				5F3EA91818E5A88500900351 /* OCNLoginViewController.h */,
+				5F3EA91918E5A88500900351 /* OCNLoginViewController.m */,
+				5F3EA91B18E5A8B100900351 /* Model */,
 				5F06EFDB1876663A00D2C1B4 /* OCNForumsViewController.h */,
 				5F06EFDC1876663A00D2C1B4 /* OCNForumsViewController.m */,
 				5F06EFE81876AA1E00D2C1B4 /* Model */,
@@ -250,6 +262,13 @@
 			name = View;
 			sourceTree = "<group>";
 		};
+		5F3EA91B18E5A8B100900351 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
 		5F5D01C518D1F75500727B7A /* Servers */ = {
 			isa = PBXGroup;
 			children = (
@@ -279,6 +298,8 @@
 				5FA128171881204A00EAEDE0 /* XMLReader.m */,
 				5FA24E71187C27D4002D83E5 /* UIImage+RoundedCorner.h */,
 				5FA24E72187C27D4002D83E5 /* UIImage+RoundedCorner.m */,
+				5F3EA96018E6DEBA00900351 /* NSMutableArray+ReverseArray.h */,
+				5F3EA96118E6DEBA00900351 /* NSMutableArray+ReverseArray.m */,
 			);
 			name = "Shared Classes";
 			sourceTree = "<group>";
@@ -376,6 +397,7 @@
 				5F06EFBC1876655200D2C1B4 /* Images.xcassets in Resources */,
 				5F131A60188AC41D00FEF76A /* Settings.bundle in Resources */,
 				5F06EFB41876655200D2C1B4 /* Main_iPhone.storyboard in Resources */,
+				5F3EA96418E7E8F300900351 /* appicon.png in Resources */,
 				5F06EFAB1876655200D2C1B4 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -398,9 +420,11 @@
 				5FA24E73187C27D4002D83E5 /* UIImage+RoundedCorner.m in Sources */,
 				5FF7216E187ECF370099271B /* ProfileViewController.m in Sources */,
 				5F3EA87018E1B34300900351 /* PostParser.m in Sources */,
+				5F3EA91A18E5A88500900351 /* OCNLoginViewController.m in Sources */,
 				5F3EA87318E1B37B00900351 /* Topic.m in Sources */,
 				5F06EFAD1876655200D2C1B4 /* main.m in Sources */,
 				5F3EA91718E5418500900351 /* Alerts.m in Sources */,
+				5F3EA96218E6DEBA00900351 /* NSMutableArray+ReverseArray.m in Sources */,
 				5FA1283218823C9C00EAEDE0 /* Forum.m in Sources */,
 				5FA1280F18811D3B00EAEDE0 /* TopicParser.m in Sources */,
 				5F06EFB11876655200D2C1B4 /* OCNAppDelegate.m in Sources */,
