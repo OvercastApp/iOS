@@ -24,6 +24,8 @@
 @property (nonatomic) int currentPage;
 @property (nonatomic) BOOL denyGetNewSection;
 
+@property (nonatomic) BOOL didShowLogin;
+
 @end
 
 @implementation OCNForumsViewController
@@ -37,6 +39,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [self clearOldData];
     self.userDefaults = [NSUserDefaults standardUserDefaults];
     [[NSUserDefaults standardUserDefaults] synchronize];
     NSLog(@"Is hiding heads: %d | Source: %d",(int)[self.userDefaults boolForKey:@"head_image_preference"],(int)[self.userDefaults integerForKey:@"image_source_preference"]);
@@ -45,6 +49,11 @@
                                                  name:@"UpdateTopics"
                                                object:nil];
     [self refreshForumContent];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+//    [self askForLogin];
 }
 
 - (void)didReceiveMemoryWarning
@@ -106,27 +115,49 @@
     return _allTopics;
 }
 
+#pragma mark - Login
+
+- (void)askForLogin
+{
+    if (![self.userDefaults boolForKey:@"Login"] && !self.didShowLogin) {
+//        [self.userDefaults setBool:YES
+//                            forKey:@"Login"];
+        [self performSegueWithIdentifier:@"Login" sender:self];
+    }
+}
+
 #pragma mark - Refreshing
+
+- (void)clearOldData
+{
+    self.currentPage = 0;
+    self.allTopics = nil;
+    self.denyGetNewSection = YES;
+    self.categoryParser = nil;
+    self.topicParser = nil;
+}
 
 - (IBAction)refreshContent
 {
     if (!self.refreshing) {
         self.categoriesButton.enabled = NO;
-        self.refreshing = YES;
         [self refreshForumContent];
     }
 }
 
 - (void)refreshForumContent
 {
-    //Clear out old data, begin refreshing
-    [self.refreshWheel beginRefreshing];
-    self.currentPage = 0;
-    self.allTopics = nil;
+    //Clear old data
+    [self clearOldData];
     
-    //Prep
-    if (self.tableView.contentOffset.y == 0) {
-        [self.tableView setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height) animated:YES];
+    //Begin refreshing
+    self.refreshing = YES;
+    [self.refreshWheel beginRefreshing];
+    
+    //Move top into view
+    if (!(self.tableView.contentOffset.y < 10)) {
+        [self.tableView setContentOffset:CGPointMake(0, -70 - self.refreshControl.frame.size.height)
+                                animated:NO];
     }
     
     //Refresh
@@ -153,16 +184,18 @@
             [self.tableView reloadData];
             NSLog(@"Updating page %i with a total of %lu topics",(self.currentPage + 1),(unsigned long)[self.allTopics[self.currentPage] count]);
             
-            //Can get next page
-            self.denyGetNewSection = NO;
+            //Check if images needed
             if (![self.userDefaults boolForKey:@"head_image_preference"]) {
                 [self downloadAuthorImages];
             }
-            //No longer refreshing content
-            self.refreshing = false;
-            [self.refreshWheel endRefreshing];
-            self.categoriesButton.enabled = true;
+            
+            //Update extras
+            self.categoriesButton.enabled = YES;
+            self.denyGetNewSection = NO;
         }
+        //No longer refreshing content
+        self.refreshing = false;
+        [self.refreshWheel endRefreshing];
     }
 }
 
@@ -231,20 +264,20 @@
 {
     static NSString *CellIdentifier = @"Forum Topic Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    
-    if ([self.authorImages objectForKey:[self getAuthorForIndexPath:indexPath]]) {
-        UIImage *image = [self.authorImages objectForKey:[self getAuthorForIndexPath:indexPath]];
-        cell.imageView.image = [image imageWithRoundedCornersRadius:5];
+    if ([self.allTopics count]) {
+        if ([self.authorImages objectForKey:[self getAuthorForIndexPath:indexPath]]) {
+            UIImage *image = [self.authorImages objectForKey:[self getAuthorForIndexPath:indexPath]];
+            cell.imageView.image = [image imageWithRoundedCornersRadius:5];
+        }
+        cell.tag = indexPath.row;
+        
+        cell.textLabel.text = [self getTitleForIndexPath:indexPath];
+        cell.textLabel.font = [UIFont systemFontOfSize:16];
+        
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@%@",[self getAuthorForIndexPath:indexPath],@""];
+        cell.detailTextLabel.font = [UIFont boldSystemFontOfSize:12];
+        cell.detailTextLabel.textColor = [self getColorForIndexPath:indexPath];
     }
-    cell.tag = indexPath.row;
-    
-    cell.textLabel.text = [self getTitleForIndexPath:indexPath];
-    cell.textLabel.font = [UIFont systemFontOfSize:16];
-    
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@%@",[self getAuthorForIndexPath:indexPath],@""];
-    cell.detailTextLabel.font = [UIFont boldSystemFontOfSize:12];
-    cell.detailTextLabel.textColor = [self getColorForIndexPath:indexPath];
-    
     return cell;
 }
 
@@ -297,6 +330,7 @@
     if (self.topicPopoverController) {
         [self.topicPopoverController dismissPopoverAnimated:YES];
     }
+    self.topicViewController.lastPage = 0;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -371,14 +405,18 @@
     }
 }
 
-- (void)unwind:(UIStoryboardSegue *)unwindSegue
+- (IBAction)unwindFromCategory:(UIStoryboardSegue *)unwindSegue
 {
     CategoriesViewController *category = (CategoriesViewController *)unwindSegue.sourceViewController;
     self.currentForum = category.currentForum;
     
     self.navigationItem.title = self.currentForum.title;
-    self.refreshing = true;
     [self refreshForumContent];
+}
+
+- (IBAction)unwindFromLogin:(UIStoryboardSegue *)unwindSegue
+{
+    self.didShowLogin = YES;
 }
 
 @end

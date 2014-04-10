@@ -25,7 +25,6 @@
                                                             if (error) {
                                                                 NSLog(@"Retrieving forum source failed with error: \n%@", error);
                                                                 [self sendRefreshUINotification:self];
-                                                                [Alerts sendConnectionFaliureAlert];
                                                             } else [self parseData:xmlData];
                                                         });
                                                     }];

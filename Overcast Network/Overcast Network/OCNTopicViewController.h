@@ -16,9 +16,12 @@
 @property (nonatomic,strong) Topic *topic;
 @property (nonatomic,strong) UIPopoverController *masterPopoverController;
 @property (nonatomic,strong) NSMutableDictionary *authorImages;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *reverseButton;
+
+@property (nonatomic) int lastPage;
 
 - (void)refreshTopic;
 - (IBAction)refreshPulled;
-
+- (IBAction)reverseOrder:(UIBarButtonItem *)sender;
 
 @end

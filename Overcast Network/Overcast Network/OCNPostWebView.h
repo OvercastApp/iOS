@@ -11,5 +11,6 @@
 @interface OCNPostWebView : UIWebView
 
 @property (nonatomic,strong) NSIndexPath *postIndex;
+@property (nonatomic) NSUInteger loads;
 
 @end

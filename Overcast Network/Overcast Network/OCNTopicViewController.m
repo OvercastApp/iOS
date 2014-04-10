@@ -8,6 +8,7 @@
 
 #import "OCNTopicViewController.h"
 #import "UIImage+RoundedCorner.h"
+#import "NSMutableArray+ReverseArray.h"
 #import "OCNPostWebView.h"
 
 @interface OCNTopicViewController ()
@@ -17,12 +18,12 @@
 
 @property (nonatomic,strong) PostParser *postParser;
 
-@property (nonatomic,strong) NSMutableDictionary *heightsOfWebViews;
+@property (nonatomic,strong) NSMutableDictionary *webViewHeights;
 
 @property (nonatomic,strong) NSMutableArray *allPosts;
 @property (nonatomic) int currentPage;
-@property (nonatomic) int lastPage;
 @property (nonatomic) BOOL denyGetNewSection;
+@property (nonatomic) BOOL reversed;
 
 @end
 
@@ -68,14 +69,13 @@
     return _postParser;
 }
 
-- (NSMutableDictionary *)heightsOfWebViews
+- (NSMutableDictionary *)webViewHeights
 {
-    if (!_heightsOfWebViews) {
-        _heightsOfWebViews = [[NSMutableDictionary alloc] init];
+    if (!_webViewHeights) {
+        _webViewHeights = [[NSMutableDictionary alloc] init];
     }
-    return _heightsOfWebViews;
+    return _webViewHeights;
 }
-
 - (NSMutableArray *)allPosts
 {
     if (!_allPosts) {
@@ -101,13 +101,16 @@
 {
     //Clear out old data, begin refreshing
     [self.refreshControl beginRefreshing];
-    self.currentPage = 0;
+    self.denyGetNewSection = YES;
+    self.reverseButton.enabled = NO;
+    self.currentPage = self.reversed ? self.lastPage - 1 : 0;
     self.allPosts = nil;
     
-    //Prep
-    if (self.tableView.contentOffset.y == 0) {
-        [self.tableView setContentOffset:CGPointMake(0, -self.refreshControl.frame.size.height) animated:YES];
-    }
+    //Move top into view
+    [self.tableView setContentOffset:CGPointMake(0, -70 - self.refreshControl.frame.size.height)
+                            animated:YES];
+    
+    //Set NotificationCenter
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(updateUI:)
                                                  name:@"UpdatePosts"
@@ -117,14 +120,26 @@
     //Refresh
     NSURL *url = self.topic.topicURL;
     if (url != nil) {
-        [self.postParser refreshPostsWithURL:[NSString stringWithFormat:@"%@",url]];
+        if (self.currentPage) {
+            [self.postParser refreshPostsWithURL:[NSString stringWithFormat:@"%@?page=%i",url,self.currentPage + 1]];
+        } else {
+            [self.postParser refreshPostsWithURL:[NSString stringWithFormat:@"%@",url]];
+        }
     }
 }
 
 - (void)getNewPage
 {
-    self.currentPage++;
-    if (self.lastPage > self.currentPage) {
+    self.currentPage += self.reversed ? -1 : 1;
+    
+    BOOL islastPage;
+    if (self.reversed) {
+        islastPage = (self.currentPage >= 0);
+    } else {
+        islastPage = (self.currentPage < self.lastPage);
+    }
+    
+    if (islastPage) {
         [self.refreshControl beginRefreshing];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(updateUI:)
@@ -132,8 +147,17 @@
                                                    object:nil];
         [self.postParser refreshPostsWithURL:[NSString stringWithFormat:@"%@?page=%i",self.topic.topicURL,(self.currentPage + 1)]];
     } else {
-        self.currentPage--;
+        self.currentPage += self.reversed ? 1 : -1;
         NSLog(@"Last page bro");
+    }
+}
+
+- (NSArray *)currentPagePosts
+{
+    if (self.reversed) {
+        return self.allPosts[(self.lastPage - self.currentPage - 1)];
+    } else {
+        return self.allPosts[self.currentPage];
     }
 }
 
@@ -141,7 +165,11 @@
 {
     if ([[notification name] isEqualToString:@"UpdatePosts"]) {
         if (self.postParser.posts) {
+            self.reverseButton.enabled = YES;
             //Move all posts for page into array with pages, clear posts
+            if (self.reversed) {
+                [self.postParser.posts reverseArray];
+            }
             [self.allPosts addObject:self.postParser.posts];
             if (self.lastPage == 0) {
                 self.lastPage = self.postParser.lastPage;
@@ -151,28 +179,30 @@
             //Reload all data
             [self.tableView reloadData];
             [[NSNotificationCenter defaultCenter] removeObserver:self];
-            NSLog(@"Updating page %i/%i with a total of %lu posts",(self.currentPage + 1),self.lastPage,(unsigned long)[self.allPosts[self.currentPage] count]);
+            NSLog(@"Updating page %i/%i with a total of %i posts",(self.currentPage + 1),self.lastPage,[[self currentPagePosts] count]);
             
             //Can get next page
             self.denyGetNewSection = NO;
             if (![self.userDefaults boolForKey:@"head_image_preference"]) {
                 [self downloadAuthorImages];
             }
-            //No longer refreshing content
-            self.refreshing = false;
-            [self.refreshControl endRefreshing];
         }
         else {
             self.currentPage--;
             self.denyGetNewSection = NO;
         }
+        //No longer refreshing content
+        self.refreshing = NO;
+        [self.tableView setContentOffset:CGPointMake(0, 0 - self.refreshControl.frame.size.height)
+                                animated:YES];
+        [self.refreshControl endRefreshing];
     }
 }
 
 - (void)downloadAuthorImages
 {
     dispatch_queue_t imageQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
-    for (Post *post in self.allPosts[self.currentPage]) {
+    for (Post *post in [self currentPagePosts]) {
         dispatch_async(imageQueue, ^(void) {
             NSString *author = post.author;
             if (![self.authorImages objectForKey:author]) {
@@ -199,7 +229,39 @@
     }
 }
 
+#pragma mark - Reverse sort
+
+- (IBAction)reverseOrder:(UIBarButtonItem *)sender
+{
+    self.denyGetNewSection = YES;
+    if (self.reversed) {
+        self.reverseButton.style = UIBarButtonItemStyleBordered;
+        self.reverseButton.tintColor = nil;
+        self.reversed = NO;
+    } else {
+        self.reverseButton.style = UIBarButtonItemStyleDone;
+        self.reverseButton.tintColor = [UIColor greenColor];
+        self.reversed = YES;
+    }
+    [self refreshTopic];
+}
+
+- (void)reverseArrays
+{
+    [self.allPosts reverseArray];
+    for (NSMutableArray *post in self.allPosts) {
+        [post reverseArray];
+    }
+    NSRange rangeOfSections = NSMakeRange(0,[self.allPosts count]);
+    NSIndexSet *sectionsToReload = [NSIndexSet indexSetWithIndexesInRange:rangeOfSections];
+    [self.tableView reloadSections:sectionsToReload
+                  withRowAnimation:UITableViewRowAnimationFade];
+}
+
 #pragma mark - Table view data source
+
+#define INDEX_PATH_KEY [NSString stringWithFormat:@"%i,%i",indexPath.section,indexPath.row]
+#define WEB_VIEW_KEY [NSString stringWithFormat:@"%i,%i",webView.postIndex.section,webView.postIndex.row]
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -218,10 +280,17 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    return [NSString stringWithFormat:@"Page %i",(section + 1)];
+    long currentPage = self.reversed ? self.lastPage - section : section + 1;
+    return [NSString stringWithFormat:@"Page %li",currentPage];
 }
 
-#define INDEX_PATH_KEY [NSString stringWithFormat:@"%i,%i",indexPath.section,indexPath.row]
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
+{
+    if (section + 1 == self.lastPage) {
+        return self.reversed ? @"First page of thread" : @"Last page of thread";
+    }
+    return nil;
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -229,61 +298,77 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier
                                                             forIndexPath:indexPath];
     
-    UIImageView *authorImage = (UIImageView *)[cell.contentView viewWithTag:1];
-    UILabel *author = (UILabel *)[cell.contentView viewWithTag:2];
-    UILabel *lastPosted = (UILabel *)[cell.contentView viewWithTag:3];
-    OCNPostWebView *contentWebView = (OCNPostWebView *)[cell.contentView viewWithTag:4];
-    
-
-    NSString *authorName = [self getAuthorForIndexPath:indexPath];
-    //If there is image, get image, else do nothing.
-    if ([self.authorImages objectForKey:authorName]) {
-        authorImage.image = [[self.authorImages objectForKey:authorName] imageWithRoundedCornersRadius:5];
+    if ([self.allPosts count]) {
+        UIImageView *authorImage = (UIImageView *)[cell.contentView viewWithTag:1];
+        UILabel *author = (UILabel *)[cell.contentView viewWithTag:2];
+        UILabel *lastPosted = (UILabel *)[cell.contentView viewWithTag:3];
+        OCNPostWebView *contentWebView = (OCNPostWebView *)[cell.contentView viewWithTag:4];
+        
+        
+        NSString *authorName = [self getAuthorForIndexPath:indexPath];
+        //If there is image, get image, else do nothing.
+        if ([self.authorImages objectForKey:authorName]) {
+            authorImage.image = [[self.authorImages objectForKey:authorName] imageWithRoundedCornersRadius:5];
+        }
+        
+        //Get author name, color, last posted date
+        author.text = [NSString stringWithFormat:@"%@%@",authorName,@""];
+        author.textColor = [self getColorForIndexPath:indexPath];
+        lastPosted.text = [self getLastPostedForIndexPath:indexPath];
+        
+        //Get content of post, check for height once, load HTML every time.
+        if (![self.webViewHeights objectForKey:INDEX_PATH_KEY]) {
+            [contentWebView setDelegate:self];
+            contentWebView.scrollView.scrollEnabled = false;
+            contentWebView.postIndex = indexPath;
+        }
+        [contentWebView loadHTMLString:[self getContentForIndexPath:indexPath] baseURL:nil];
     }
-    
-    //Get author name, color, last posted date
-    author.text = [NSString stringWithFormat:@"%@%@",authorName,@""];
-    author.textColor = [self getColorForIndexPath:indexPath];
-    lastPosted.text = [self getLastPostedForIndexPath:indexPath];
-    
-    //Get content of post, check for height once, load HTML every time.
-    [contentWebView setDelegate:nil];
-    if (![self.heightsOfWebViews objectForKey:INDEX_PATH_KEY]) {
-        [contentWebView setDelegate:self];
-        contentWebView.scrollView.scrollEnabled = false;
-        contentWebView.postIndex = indexPath;
-    }
-    [contentWebView loadHTMLString:[self getHTMLStringForIndexPath:indexPath] baseURL:nil];
     
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (![self.heightsOfWebViews objectForKey:INDEX_PATH_KEY]) {
-        return 100;
-    } else {
-        return 80 + [[self.heightsOfWebViews objectForKey:INDEX_PATH_KEY] intValue];
+    if ([self.webViewHeights objectForKey:INDEX_PATH_KEY]) {
+        return 80 + [[self.webViewHeights objectForKey:INDEX_PATH_KEY] intValue];
     }
+    return 100;
 }
 
-#define WEB_VIEW_KEY [NSString stringWithFormat:@"%i,%i",webView.postIndex.section,webView.postIndex.row]
+#pragma mark Webview delegate
+
+- (void)webViewDidStartLoad:(OCNPostWebView *)webView
+{
+    webView.loads++;
+}
 
 - (void)webViewDidFinishLoad:(OCNPostWebView *)webView
 {
-    if (![self.heightsOfWebViews objectForKey:WEB_VIEW_KEY]) {
-        int height = [self checkHeightFromWebView:webView];
-        [self.heightsOfWebViews setObject:[NSNumber numberWithInt:height]
+    webView.loads--;
+    if (!webView.loads && ![self.webViewHeights objectForKey:WEB_VIEW_KEY]) {
+        [self.webViewHeights setObject:[NSNumber numberWithInt:[self checkHeightFromWebView:webView]]
                                 forKey:WEB_VIEW_KEY];
+        [webView setHidden:NO];
+        NSIndexPath *rowToReload = [NSIndexPath indexPathForRow:webView.tag
+                                                      inSection:0];
+        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:rowToReload]
+                              withRowAnimation:UITableViewRowAnimationFade];
     }
-    [webView setHidden:NO];
-    [self.tableView beginUpdates];
-    NSIndexPath *rowToReload = [NSIndexPath indexPathForRow:webView.tag
-                                                  inSection:0];
-    [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:rowToReload]
-                          withRowAnimation:UITableViewRowAnimationFade];
-    [self.tableView endUpdates];
 }
+
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+{
+    if (navigationType == UIWebViewNavigationTypeLinkClicked){
+        
+        NSURL *url = request.URL;
+        [self openExternalURL:url];
+        return NO;
+    }
+    return YES;
+}
+
+#pragma mark Accessory methods
 
 - (int)checkHeightFromWebView:(UIWebView *)webView
 {
@@ -296,7 +381,11 @@
     return frame.size.height;
 }
 
-#pragma mark Accessory methods
+- (void)openExternalURL:(NSURL *)url
+{
+    [[UIApplication sharedApplication] openURL:url];
+}
+
 - (NSString *)getAuthorForIndexPath:(NSIndexPath *)indexPath
 {
     return [[self.allPosts[indexPath.section] objectAtIndex:indexPath.row] author];
@@ -329,18 +418,6 @@
     return [[self.allPosts[indexPath.section] objectAtIndex:indexPath.row] content];
 }
 
-- (NSString *)getHTMLStringForIndexPath:(NSIndexPath *)indexPath
-{
-    NSString *HTMLString = [self getContentForIndexPath:indexPath];
-    HTMLString = [NSString stringWithFormat:@"<font face='Helvetica' size='2'><p>%@</p>",HTMLString];
-    //Add custom tags here!
-    HTMLString = [HTMLString stringByReplacingOccurrencesOfString:@"<br/>" withString:@"<br>"];
-    HTMLString = [HTMLString stringByReplacingOccurrencesOfString:@" Â " withString:@" "];
-    HTMLString = [HTMLString stringByReplacingOccurrencesOfString:@"Â" withString:@""];
-    HTMLString = [HTMLString stringByReplacingOccurrencesOfString:@"<img" withString:@"<img width=\"100%\""];
-    HTMLString = [HTMLString stringByReplacingOccurrencesOfString:@"<(" withString:@"(< "];
-    return HTMLString;
-}
 /*
 #pragma mark - Navigation
 

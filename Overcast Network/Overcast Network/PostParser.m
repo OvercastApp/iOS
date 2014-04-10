@@ -42,10 +42,7 @@
         NSString *rank = [NSString stringWithFormat:@"%@",[post valueForKeyPath:@"author.rank"]];
         NSString *lastPosted = [[[NSString stringWithFormat:@"%@",[post valueForKeyPath:@"status.text"]] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@" "];
         NSString *content = [NSString stringWithFormat:@"%@",[post valueForKeyPath:@"content.text"]];
-        content = [[content stringByReplacingOccurrencesOfString:@"(("
-                                                      withString:@"<"]
-                   stringByReplacingOccurrencesOfString:@"))"
-                   withString:@">"];
+        content = [self removeParsingErrors:content];
         Post *newPost = [Post postWithAuthor:author
                                         rank:rank
                                   lastPosted:lastPosted
@@ -57,6 +54,20 @@
         self.lastPage = 1;
     }
     [self sendRefreshUINotification:self];
+}
+
+- (NSString *)removeParsingErrors:(NSString *)parsedString
+{
+    parsedString = [NSString stringWithFormat:@"<font face='Helvetica' size='2'><p>%@</p>",parsedString];
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"((" withString:@"<"];
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"))" withString:@">"];
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@" Â " withString:@" Â"];
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@" Â" withString:@"Â"];
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"Â" withString:@""];
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<br/>" withString:@"<br>"];
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<img" withString:@"<img width=\"100%\""];
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<(" withString:@"(< "];
+    return parsedString;
 }
 
 - (void)sendRefreshUINotification:(id)sender
