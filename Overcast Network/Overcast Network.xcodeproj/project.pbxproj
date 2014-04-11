@@ -23,6 +23,7 @@
 		5F06EFCF1876655200D2C1B4 /* Overcast_NetworkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F06EFCE1876655200D2C1B4 /* Overcast_NetworkTests.m */; };
 		5F06EFDD1876663A00D2C1B4 /* OCNForumsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F06EFDC1876663A00D2C1B4 /* OCNForumsViewController.m */; };
 		5F131A60188AC41D00FEF76A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5F131A5F188AC41D00FEF76A /* Settings.bundle */; };
+		5F3D371D18F7F2D400A2CF00 /* loading.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3D371C18F7F2D400A2CF00 /* loading.png */; };
 		5F3EA86D18E1AE2600900351 /* OCNTopicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA86C18E1AE2600900351 /* OCNTopicViewController.m */; };
 		5F3EA87018E1B34300900351 /* PostParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA86F18E1B34300900351 /* PostParser.m */; };
 		5F3EA87318E1B37B00900351 /* Topic.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA87218E1B37B00900351 /* Topic.m */; };
@@ -74,6 +75,7 @@
 		5F06EFDB1876663A00D2C1B4 /* OCNForumsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCNForumsViewController.h; sourceTree = "<group>"; };
 		5F06EFDC1876663A00D2C1B4 /* OCNForumsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCNForumsViewController.m; sourceTree = "<group>"; };
 		5F131A5F188AC41D00FEF76A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		5F3D371C18F7F2D400A2CF00 /* loading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = loading.png; sourceTree = "<group>"; };
 		5F3EA86B18E1AE2600900351 /* OCNTopicViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCNTopicViewController.h; sourceTree = "<group>"; };
 		5F3EA86C18E1AE2600900351 /* OCNTopicViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCNTopicViewController.m; sourceTree = "<group>"; };
 		5F3EA86E18E1B34300900351 /* PostParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostParser.h; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 		5F06EFE81876AA1E00D2C1B4 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				5F3D371C18F7F2D400A2CF00 /* loading.png */,
 				5FA1280D18811D3B00EAEDE0 /* TopicParser.h */,
 				5FA1280E18811D3B00EAEDE0 /* TopicParser.m */,
 				5F3EA87118E1B37B00900351 /* Topic.h */,
@@ -399,6 +402,7 @@
 				5F06EFB41876655200D2C1B4 /* Main_iPhone.storyboard in Resources */,
 				5F3EA96418E7E8F300900351 /* appicon.png in Resources */,
 				5F06EFAB1876655200D2C1B4 /* InfoPlist.strings in Resources */,
+				5F3D371D18F7F2D400A2CF00 /* loading.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -570,14 +574,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Overcast Network/Overcast Network-Prefix.pch";
 				INFOPLIST_FILE = "Overcast Network/Overcast Network-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = Overcast;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "C5B60450-7A43-40AF-85BB-D58DB931D00C";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -587,14 +591,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Overcast Network/Overcast Network-Prefix.pch";
 				INFOPLIST_FILE = "Overcast Network/Overcast Network-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = Overcast;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "C5B60450-7A43-40AF-85BB-D58DB931D00C";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

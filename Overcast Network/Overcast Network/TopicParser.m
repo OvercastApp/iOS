@@ -42,6 +42,7 @@
         Topic *newTopic = [[Topic alloc] init];
         
         newTopic.title = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"name.text"]];
+        newTopic.title = [self removeParsingErrors:newTopic.title];
         newTopic.topicURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"link.text"]]];
         newTopic.author = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"author.text"]];
         newTopic.rank = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"author.rank"]];
@@ -50,6 +51,20 @@
     }
     [self sendRefreshUINotification:self];
 }
+
+- (NSString *)removeParsingErrors:(NSString *)parsedString
+{
+    NSRange searchRange = NSMakeRange([parsedString length] - 1, 1);
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"Â"
+                                                           withString:@""
+                                                              options:0
+                                                                range:searchRange];
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@" îe2" withString:@""];
+    const char *utf8Chars = [parsedString cStringUsingEncoding:NSISOLatin1StringEncoding];
+    NSString *utf8String = [[NSString alloc] initWithCString:utf8Chars encoding:NSUTF8StringEncoding];
+    return utf8String;
+}
+
 
 #pragma mark Misc
 

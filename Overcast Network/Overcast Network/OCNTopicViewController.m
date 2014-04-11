@@ -103,6 +103,7 @@
     [self.refreshControl beginRefreshing];
     self.denyGetNewSection = YES;
     self.reverseButton.enabled = NO;
+    self.webViewHeights = nil;
     self.currentPage = self.reversed ? self.lastPage - 1 : 0;
     self.allPosts = nil;
     

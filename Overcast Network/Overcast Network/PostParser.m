@@ -24,7 +24,7 @@
                                                         NSData *xmlData = [NSData dataWithContentsOfURL:location];
                                                         dispatch_async(dispatch_get_main_queue(), ^{
                                                             if (error) {
-                                                                NSLog(@"Retrieving forum source failed with error: \n%@", error);
+                                                                NSLog(@"Retrieving posts source failed with error: \n%@", error);
                                                                 [self sendRefreshUINotification:self];
                                                                 [Alerts sendConnectionFaliureAlert];
                                                             } else [self parseData:xmlData];
@@ -58,15 +58,21 @@
 
 - (NSString *)removeParsingErrors:(NSString *)parsedString
 {
-    parsedString = [NSString stringWithFormat:@"<font face='Helvetica' size='2'><p>%@</p>",parsedString];
+    NSRange searchRange = NSMakeRange([parsedString length] - 1, 1);
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"Â"
+                                                           withString:@""
+                                                              options:0
+                                                                range:searchRange];
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@" îe2" withString:@""];
+    const char *utf8Chars = [parsedString cStringUsingEncoding:NSISOLatin1StringEncoding];
+    NSString *utf8String = [[NSString alloc] initWithCString:utf8Chars encoding:NSUTF8StringEncoding];
+    NSString *heading = @"<font face='Helvetica' size='2'>";
+    parsedString = [NSString stringWithFormat:@"%@<p>%@</p>",heading,utf8String];
     parsedString = [parsedString stringByReplacingOccurrencesOfString:@"((" withString:@"<"];
     parsedString = [parsedString stringByReplacingOccurrencesOfString:@"))" withString:@">"];
-    parsedString = [parsedString stringByReplacingOccurrencesOfString:@" Â " withString:@" Â"];
-    parsedString = [parsedString stringByReplacingOccurrencesOfString:@" Â" withString:@"Â"];
-    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"Â" withString:@""];
     parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<br/>" withString:@"<br>"];
     parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<img" withString:@"<img width=\"100%\""];
-    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<(" withString:@"(< "];
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<(" withString:@"(<"];
     return parsedString;
 }
 

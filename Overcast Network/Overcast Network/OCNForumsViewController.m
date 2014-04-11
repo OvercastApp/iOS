@@ -265,11 +265,13 @@
     static NSString *CellIdentifier = @"Forum Topic Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     if ([self.allTopics count]) {
-        if ([self.authorImages objectForKey:[self getAuthorForIndexPath:indexPath]]) {
-            UIImage *image = [self.authorImages objectForKey:[self getAuthorForIndexPath:indexPath]];
-            cell.imageView.image = [image imageWithRoundedCornersRadius:5];
+        if (![self.userDefaults boolForKey:@"head_image_preference"]) {
+            if ([self.authorImages objectForKey:[self getAuthorForIndexPath:indexPath]]) {
+                UIImage *image = [self.authorImages objectForKey:[self getAuthorForIndexPath:indexPath]];
+                cell.imageView.image = [image imageWithRoundedCornersRadius:5];
+            } else cell.imageView.image = [UIImage imageNamed:@"loading.png"];
+            cell.tag = indexPath.row;
         }
-        cell.tag = indexPath.row;
         
         cell.textLabel.text = [self getTitleForIndexPath:indexPath];
         cell.textLabel.font = [UIFont systemFontOfSize:16];
