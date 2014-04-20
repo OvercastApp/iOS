@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OCNReplyViewController : UIViewController <NSURLConnectionDelegate>
+@interface OCNReplyViewController : UIViewController <NSURLConnectionDelegate, UITextViewDelegate>
 
 @property (nonatomic,strong) NSString *postURL;
 @property (nonatomic,strong) NSString *replyToID;

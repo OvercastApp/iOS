@@ -271,13 +271,14 @@
                                         <constraint firstItem="DtL-Mn-kua" firstAttribute="leading" secondItem="666-FT-wZr" secondAttribute="trailing" constant="8" id="5Xh-MM-XeT"/>
                                         <constraint firstItem="aZe-bu-trk" firstAttribute="centerX" secondItem="x87-Wk-4Ib" secondAttribute="centerX" id="Axr-XM-8Ag"/>
                                         <constraint firstItem="aZe-bu-trk" firstAttribute="top" secondItem="Qxk-K6-2hl" secondAttribute="bottom" constant="14" id="Hs8-c6-Nkd"/>
+                                        <constraint firstItem="Qxk-K6-2hl" firstAttribute="leading" secondItem="666-FT-wZr" secondAttribute="leading" id="JeT-oP-AJm"/>
                                         <constraint firstItem="Qxk-K6-2hl" firstAttribute="top" secondItem="666-FT-wZr" secondAttribute="bottom" id="KZo-TE-wYp"/>
                                         <constraint firstItem="aZe-bu-trk" firstAttribute="top" secondItem="GZ6-cY-lkj" secondAttribute="bottom" constant="8" symbolic="YES" id="UKL-O9-t6q"/>
                                         <constraint firstAttribute="trailing" secondItem="DtL-Mn-kua" secondAttribute="trailing" constant="20" symbolic="YES" id="Vhx-QX-uFw"/>
-                                        <constraint firstItem="Qxk-K6-2hl" firstAttribute="leading" secondItem="GZ6-cY-lkj" secondAttribute="trailing" constant="8" symbolic="YES" id="Xva-54-fms"/>
                                         <constraint firstItem="666-FT-wZr" firstAttribute="leading" secondItem="GZ6-cY-lkj" secondAttribute="trailing" constant="8" symbolic="YES" id="cDh-2p-OR0"/>
                                         <constraint firstItem="666-FT-wZr" firstAttribute="top" secondItem="x87-Wk-4Ib" secondAttribute="top" constant="25" id="eJs-JR-zjN"/>
                                         <constraint firstItem="aZe-bu-trk" firstAttribute="leading" secondItem="x87-Wk-4Ib" secondAttribute="leading" constant="10" id="fRt-s8-Zxi"/>
+                                        <constraint firstItem="666-FT-wZr" firstAttribute="leading" secondItem="x87-Wk-4Ib" secondAttribute="leading" priority="500" constant="20" id="fYQ-31-SAo"/>
                                         <constraint firstItem="GZ6-cY-lkj" firstAttribute="leading" secondItem="x87-Wk-4Ib" secondAttribute="leading" constant="20" symbolic="YES" id="hhs-9b-3Ld"/>
                                         <constraint firstItem="DtL-Mn-kua" firstAttribute="top" secondItem="x87-Wk-4Ib" secondAttribute="top" constant="20" symbolic="YES" id="qlC-u9-H1K"/>
                                         <constraint firstItem="GZ6-cY-lkj" firstAttribute="top" secondItem="x87-Wk-4Ib" secondAttribute="top" constant="20" symbolic="YES" id="sIs-Zg-L2G"/>
@@ -573,7 +574,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="AXX-xx-5Xp"/>
+        <segue reference="vNA-46-2Wp"/>
         <segue reference="mD3-4Z-d2A"/>
     </inferredMetricsTieBreakers>
 </document>

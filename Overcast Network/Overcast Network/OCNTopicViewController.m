@@ -326,9 +326,13 @@
         
         //If there is image, get image, else use loading image.
         NSString *authorName = post.author;
-        if ([self.authorImages objectForKey:authorName]) {
-            authorImage.image = [[self.authorImages objectForKey:authorName] imageWithRoundedCornersRadius:5];
-        } else authorImage.image = [[UIImage imageNamed:@"loading.png"] imageWithRoundedCornersRadius:5];
+        if (![self.userDefaults boolForKey:@"head_image_preference"]) {
+            if ([self.authorImages objectForKey:authorName]) {
+                authorImage.image = [[self.authorImages objectForKey:authorName] imageWithRoundedCornersRadius:5];
+            } else authorImage.image = [[UIImage imageNamed:@"loading.png"] imageWithRoundedCornersRadius:5];
+        } else {
+            [authorImage removeFromSuperview];
+        }
         
         //Get author name, color, last posted date
         author.text = authorName;
