@@ -7,11 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "OCNForumsViewController.h"
+#import "TopicParser.h"
 #import "PostParser.h"
-#import "Post.h"
 
-@interface OCNTopicViewController : UITableViewController <UISplitViewControllerDelegate, UIWebViewDelegate>
+#define MAXSALI_AVATAR @"http://ocnapp.maxsa.li/avatar.php?name=%@&size=48"
+#define OCN_AVATAR @"https://avatar.oc.tc/%@/48.png"
+
+@interface OCNTopicViewController : UITableViewController <UISplitViewControllerDelegate, UIWebViewDelegate, UIActionSheetDelegate>
 
 @property (nonatomic,strong) Topic *topic;
 @property (nonatomic,strong) UIPopoverController *masterPopoverController;
@@ -23,5 +25,7 @@
 - (void)refreshTopic;
 - (IBAction)refreshPulled;
 - (IBAction)reverseOrder:(UIBarButtonItem *)sender;
+
+- (IBAction)shareTopic:(id)sender;
 
 @end

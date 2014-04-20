@@ -7,9 +7,13 @@
 //
 
 #import "OCNTopicViewController.h"
+#import "OCNReplyViewController.h"
+#import "OCNPostViewController.h"
+
 #import "UIImage+RoundedCorner.h"
 #import "NSMutableArray+ReverseArray.h"
 #import "OCNPostWebView.h"
+#import "UIWebView+CheckHeight.h"
 
 @interface OCNTopicViewController ()
 
@@ -108,8 +112,9 @@
     self.allPosts = nil;
     
     //Move top into view
-    [self.tableView setContentOffset:CGPointMake(0, -70 - self.refreshControl.frame.size.height)
-                            animated:YES];
+    if (self.tableView.contentOffset.y >= 0)
+        [self.tableView setContentOffset:CGPointMake(0, - self.tableView.contentInset.top)
+                                animated:YES];
     
     //Set NotificationCenter
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -119,12 +124,11 @@
     [self.masterPopoverController dismissPopoverAnimated:YES];
     
     //Refresh
-    NSURL *url = self.topic.topicURL;
-    if (url != nil) {
+    if (self.topic.topicURL != nil) {
         if (self.currentPage) {
-            [self.postParser refreshPostsWithURL:[NSString stringWithFormat:@"%@?page=%i",url,self.currentPage + 1]];
+            [self.postParser refreshPostsWithURL:[NSString stringWithFormat:@"%@?page=%i",self.topic.topicURL,self.currentPage + 1]];
         } else {
-            [self.postParser refreshPostsWithURL:[NSString stringWithFormat:@"%@",url]];
+            [self.postParser refreshPostsWithURL:[NSString stringWithFormat:@"%@",self.topic.topicURL]];
         }
     }
 }
@@ -166,6 +170,7 @@
 {
     if ([[notification name] isEqualToString:@"UpdatePosts"]) {
         if (self.postParser.posts) {
+            [self.navigationController setToolbarHidden:NO animated:YES];
             self.reverseButton.enabled = YES;
             //Move all posts for page into array with pages, clear posts
             if (self.reversed) {
@@ -180,7 +185,7 @@
             //Reload all data
             [self.tableView reloadData];
             [[NSNotificationCenter defaultCenter] removeObserver:self];
-            NSLog(@"Updating page %i/%i with a total of %i posts",(self.currentPage + 1),self.lastPage,[[self currentPagePosts] count]);
+            NSLog(@"Updating page %i/%i with a total of %lu posts",(self.currentPage + 1),self.lastPage,(unsigned long)[[self currentPagePosts] count]);
             
             //Can get next page
             self.denyGetNewSection = NO;
@@ -204,9 +209,11 @@
 {
     dispatch_queue_t imageQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
     for (Post *post in [self currentPagePosts]) {
-        dispatch_async(imageQueue, ^(void) {
-            NSString *author = post.author;
-            if (![self.authorImages objectForKey:author]) {
+        NSString *author = post.author;
+        if (![self.authorImages objectForKey:author]) {
+            dispatch_async(imageQueue, ^(void) {
+                int index = (int)[[self currentPagePosts] indexOfObject:post];
+                int section = self.reversed ? self.lastPage - self.currentPage - 1 : self.currentPage;
                 NSString *sourceURL = [[NSString alloc] init];
                 switch ([self.userDefaults integerForKey:@"image_source_preference"]) {
                     case 0:
@@ -218,15 +225,26 @@
                         break;
                 }
                 NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:sourceURL]];
-                UIImage* image = [[UIImage alloc] initWithData:imageData];
+                UIImage *image = [[UIImage alloc] initWithData:imageData];
                 if (image) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [self.authorImages setObject:image
                                               forKey:author];
+                        if (!self.refreshing) {
+                            NSIndexPath *rowToReload = [NSIndexPath indexPathForRow:index
+                                                                          inSection:section];
+                            UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:rowToReload];
+                            
+                            if (cell) {
+                                NSArray *rowsToReload = [[NSArray alloc] initWithObjects:rowToReload, nil];
+                                [self.tableView reloadRowsAtIndexPaths:rowsToReload
+                                                      withRowAnimation:UITableViewRowAnimationAutomatic];
+                            }
+                        }
                     });
                 }
-            }
-        });
+            });
+        }
     }
 }
 
@@ -261,8 +279,8 @@
 
 #pragma mark - Table view data source
 
-#define INDEX_PATH_KEY [NSString stringWithFormat:@"%i,%i",indexPath.section,indexPath.row]
-#define WEB_VIEW_KEY [NSString stringWithFormat:@"%i,%i",webView.postIndex.section,webView.postIndex.row]
+#define INDEX_PATH_KEY [NSString stringWithFormat:@"%lu,%lu",(unsigned long)indexPath.section,(unsigned long)indexPath.row]
+#define WEB_VIEW_KEY [NSString stringWithFormat:@"%lu,%lu",(unsigned long)webView.postIndex.section,(unsigned long)webView.postIndex.row]
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -304,28 +322,28 @@
         UILabel *author = (UILabel *)[cell.contentView viewWithTag:2];
         UILabel *lastPosted = (UILabel *)[cell.contentView viewWithTag:3];
         OCNPostWebView *contentWebView = (OCNPostWebView *)[cell.contentView viewWithTag:4];
+        Post *post = [self.allPosts[indexPath.section] objectAtIndex:indexPath.row];
         
-        
-        NSString *authorName = [self getAuthorForIndexPath:indexPath];
-        //If there is image, get image, else do nothing.
+        //If there is image, get image, else use loading image.
+        NSString *authorName = post.author;
         if ([self.authorImages objectForKey:authorName]) {
             authorImage.image = [[self.authorImages objectForKey:authorName] imageWithRoundedCornersRadius:5];
-        }
+        } else authorImage.image = [[UIImage imageNamed:@"loading.png"] imageWithRoundedCornersRadius:5];
         
         //Get author name, color, last posted date
-        author.text = [NSString stringWithFormat:@"%@%@",authorName,@""];
-        author.textColor = [self getColorForIndexPath:indexPath];
-        lastPosted.text = [self getLastPostedForIndexPath:indexPath];
+        author.text = authorName;
+        author.textColor = [self getColorForRank:post.rank];
+        lastPosted.text = post.lastPosted;
         
         //Get content of post, check for height once, load HTML every time.
         if (![self.webViewHeights objectForKey:INDEX_PATH_KEY]) {
             [contentWebView setDelegate:self];
             contentWebView.scrollView.scrollEnabled = false;
-            contentWebView.postIndex = indexPath;
+            contentWebView.postIndex = [indexPath copy];
         }
-        [contentWebView loadHTMLString:[self getContentForIndexPath:indexPath] baseURL:nil];
+        [contentWebView stopLoading];
+        [contentWebView loadHTMLString:post.content baseURL:nil];
     }
-    
     return cell;
 }
 
@@ -337,7 +355,23 @@
     return 100;
 }
 
-#pragma mark Webview delegate
+#pragma mark Tableview delegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (self.reversed) {
+        if (indexPath.section == [tableView numberOfSections] - 1 && indexPath.row == [tableView numberOfRowsInSection:[tableView numberOfSections] - 1]) {
+            return;
+        }
+    } else {
+        if (indexPath.section == 0 && indexPath.row == 0) {
+            return;
+        }
+    }
+    [self performSegueWithIdentifier:@"Post" sender:[self.allPosts[indexPath.section] objectAtIndex:indexPath.row]];
+}
+
+#pragma mark - Webview delegate
 
 - (void)webViewDidStartLoad:(OCNPostWebView *)webView
 {
@@ -348,13 +382,11 @@
 {
     webView.loads--;
     if (!webView.loads && ![self.webViewHeights objectForKey:WEB_VIEW_KEY]) {
-        [self.webViewHeights setObject:[NSNumber numberWithInt:[self checkHeightFromWebView:webView]]
+        [self.webViewHeights setObject:[NSNumber numberWithInt:[webView checkHeight]]
                                 forKey:WEB_VIEW_KEY];
         [webView setHidden:NO];
-        NSIndexPath *rowToReload = [NSIndexPath indexPathForRow:webView.tag
-                                                      inSection:0];
-        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:rowToReload]
-                              withRowAnimation:UITableViewRowAnimationFade];
+        [self.tableView beginUpdates];
+        [self.tableView endUpdates];
     }
 }
 
@@ -371,30 +403,13 @@
 
 #pragma mark Accessory methods
 
-- (int)checkHeightFromWebView:(UIWebView *)webView
-{
-    CGRect frame = webView.frame;
-    frame.size.height = 1;
-    webView.frame = frame;
-    CGSize fittingSize = [webView sizeThatFits:CGSizeZero];
-    frame.size = fittingSize;
-    webView.frame = frame;
-    return frame.size.height;
-}
-
 - (void)openExternalURL:(NSURL *)url
 {
     [[UIApplication sharedApplication] openURL:url];
 }
 
-- (NSString *)getAuthorForIndexPath:(NSIndexPath *)indexPath
+- (UIColor *)getColorForRank:(NSString *)rank
 {
-    return [[self.allPosts[indexPath.section] objectAtIndex:indexPath.row] author];
-}
-
-- (UIColor *)getColorForIndexPath:(NSIndexPath *)indexPath
-{
-    NSString *rank = [[self.allPosts[indexPath.section] objectAtIndex:indexPath.row] rank];
     if ([rank isEqualToString:@"mod"]) {
         return [UIColor redColor];
     } else if ([rank isEqualToString:@"admin"]) {
@@ -409,17 +424,6 @@
     else return [UIColor blackColor];
 }
 
-- (NSString *)getLastPostedForIndexPath:(NSIndexPath *)indexPath
-{
-    return [[self.allPosts[indexPath.section] objectAtIndex:indexPath.row] lastPosted];
-}
-
-- (NSString *)getContentForIndexPath:(NSIndexPath *)indexPath
-{
-    return [[self.allPosts[indexPath.section] objectAtIndex:indexPath.row] content];
-}
-
-/*
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -427,8 +431,19 @@
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ([segue.identifier isEqualToString:@"Reply"]) {
+        OCNReplyViewController *ocnrvc = [[segue.destinationViewController viewControllers] firstObject];
+        ocnrvc.postURL = self.topic.topicURL;
+        ocnrvc.navigationItem.title = [NSString stringWithFormat:@"@%@",self.topic.author];
+    }
+    if ([segue.identifier isEqualToString:@"Post"]) {
+        OCNPostViewController *ocnpvc = segue.destinationViewController;
+        ocnpvc.post = sender;
+        ocnpvc.navigationItem.title = ocnpvc.post.author;
+        ocnpvc.topicURL = self.topic.topicURL;
+        ocnpvc.authorImages = self.authorImages;
+    }
 }
-*/
 
 #pragma mark - Table view delegate
 
@@ -466,6 +481,33 @@
     // Called when the view is shown again in the split view, invalidating the button and popover controller.
     [self.navigationItem setLeftBarButtonItem:nil animated:YES];
     self.masterPopoverController = nil;
+}
+
+- (IBAction)shareTopic:(id)sender
+{
+    UIActionSheet *shareSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                            delegate:self
+                                                   cancelButtonTitle:@"Cancel"
+                                              destructiveButtonTitle:nil
+                                                   otherButtonTitles:@"Open in Safari", @"Share", nil];
+    [shareSheet showInView:self.view];
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *buttonPressed = [actionSheet buttonTitleAtIndex:buttonIndex];
+    if ([buttonPressed isEqualToString:@"Open in Safari"]) {
+        [self openExternalURL:[NSURL URLWithString:self.topic.topicURL]];
+    }
+}
+
+- (IBAction)unwindFromReply:(UIStoryboardSegue *)unwindSegue
+{
+    self.denyGetNewSection = YES;
+    self.reverseButton.style = UIBarButtonItemStyleDone;
+    self.reverseButton.tintColor = [UIColor greenColor];
+    self.reversed = YES;
+    [self refreshTopic];
 }
 
 @end

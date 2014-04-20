@@ -14,7 +14,8 @@
 @property (nonatomic,strong) NSString *rank;
 @property (nonatomic,strong) NSString *lastPosted;
 @property (nonatomic,strong) NSString *content;
+@property (nonatomic,strong) NSString *postID;
 
-+ (Post *)postWithAuthor:(NSString *)author rank:(NSString *)rank lastPosted:(NSString *)lastPosted content:(NSString *)content;
++ (Post *)postWithAuthor:(NSString *)author rank:(NSString *)rank lastPosted:(NSString *)lastPosted content:(NSString *)content postID:(NSString *)postID;
 
 @end

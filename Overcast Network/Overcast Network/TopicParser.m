@@ -43,7 +43,7 @@
         
         newTopic.title = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"name.text"]];
         newTopic.title = [self removeParsingErrors:newTopic.title];
-        newTopic.topicURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"link.text"]]];
+        newTopic.topicURL = [topic valueForKeyPath:@"link.text"];
         newTopic.author = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"author.text"]];
         newTopic.rank = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"author.rank"]];
         newTopic.lastUpdated = nil;

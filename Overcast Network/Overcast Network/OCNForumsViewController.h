@@ -7,12 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TopicParser.h"
 #import "ForumParser.h"
 #import "Forum.h"
-
-#define MAXSALI_AVATAR @"http://ocnapp.maxsa.li/avatar.php?name=%@&size=48"
-#define OCN_AVATAR @"https://avatar.oc.tc/%@/48.png"
 
 @class OCNTopicViewController;
 

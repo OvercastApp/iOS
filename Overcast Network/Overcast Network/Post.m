@@ -10,13 +10,14 @@
 
 @implementation Post
 
-+ (Post *)postWithAuthor:(NSString *)author rank:(NSString *)rank lastPosted:(NSString *)lastPosted content:(NSString *)content
++ (Post *)postWithAuthor:(NSString *)author rank:(NSString *)rank lastPosted:(NSString *)lastPosted content:(NSString *)content postID:(NSString *)postID
 {
     Post *newPost = [[Post alloc] init];
     newPost.author = author;
     newPost.rank = rank;
     newPost.lastPosted = lastPosted;
     newPost.content = content;
+    newPost.postID = postID;
     return newPost;
 }
 

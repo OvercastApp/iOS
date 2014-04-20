@@ -10,6 +10,7 @@
 #import "OCNTopicViewController.h"
 #import "CategoriesViewController.h"
 #import "UIImage+RoundedCorner.h"
+#import "OCNAuthorImages.h"
 
 @interface OCNForumsViewController ()
 
@@ -43,6 +44,13 @@
     [self clearOldData];
     self.userDefaults = [NSUserDefaults standardUserDefaults];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    [NSTimer scheduledTimerWithTimeInterval:2
+                                     target:self
+                                   selector:@selector(checkLogins)
+                                   userInfo:nil
+                                    repeats:NO];
+    
     NSLog(@"Is hiding heads: %d | Source: %d",(int)[self.userDefaults boolForKey:@"head_image_preference"],(int)[self.userDefaults integerForKey:@"image_source_preference"]);
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(updateUI:)
@@ -53,7 +61,19 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-//    [self askForLogin];
+    [self.navigationController setToolbarHidden:YES animated:YES];
+}
+
+- (void)checkLogins
+{
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    BOOL didLogin = NO;
+    for (NSHTTPCookie *each in [cookieStorage cookiesForURL:[NSURL URLWithString:@"https://oc.tc"]]) {
+        if ([each.name isEqualToString:@"remember_user_token"])
+            didLogin = YES;
+    }
+    if (!didLogin)
+        [self performSegueWithIdentifier:@"Login" sender:self];
 }
 
 - (void)didReceiveMemoryWarning
@@ -115,17 +135,6 @@
     return _allTopics;
 }
 
-#pragma mark - Login
-
-- (void)askForLogin
-{
-    if (![self.userDefaults boolForKey:@"Login"] && !self.didShowLogin) {
-//        [self.userDefaults setBool:YES
-//                            forKey:@"Login"];
-        [self performSegueWithIdentifier:@"Login" sender:self];
-    }
-}
-
 #pragma mark - Refreshing
 
 - (void)clearOldData
@@ -155,10 +164,9 @@
     [self.refreshWheel beginRefreshing];
     
     //Move top into view
-    if (!(self.tableView.contentOffset.y < 10)) {
-        [self.tableView setContentOffset:CGPointMake(0, -70 - self.refreshControl.frame.size.height)
-                                animated:NO];
-    }
+    if (self.tableView.contentOffset.y >= 0)
+        [self.tableView setContentOffset:CGPointMake(0, - self.tableView.contentInset.top)
+                                animated:YES];
     
     //Refresh
     [self.topicParser refreshTopicsWithURL:self.currentForum.url];
@@ -203,11 +211,11 @@
 {
     dispatch_queue_t imageQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
     for (Topic *topic in self.allTopics[self.currentPage]) {
-        dispatch_async(imageQueue, ^(void) {
-            int index = (int)[self.allTopics[self.currentPage] indexOfObject:topic];
-            int section = self.currentPage;
-            NSString *author = topic.author;
-            if (![self.authorImages objectForKey:author]) {
+        NSString *author = topic.author;
+        if (![self.authorImages objectForKey:author]) {
+            dispatch_async(imageQueue, ^(void) {
+                int index = (int)[self.allTopics[self.currentPage] indexOfObject:topic];
+                int section = self.currentPage;
                 NSString *sourceURL = [[NSString alloc] init];
                 switch ([self.userDefaults integerForKey:@"image_source_preference"]) {
                     case 0:
@@ -233,8 +241,8 @@
                         }
                     });
                 }
-            }
-        });
+            });
+        }
     }
 }
 
@@ -265,18 +273,20 @@
     static NSString *CellIdentifier = @"Forum Topic Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     if ([self.allTopics count]) {
+        NSString *author = [[self.allTopics[indexPath.section] objectAtIndex:indexPath.row] author];
+        NSString *title = [[self.allTopics[indexPath.section] objectAtIndex:indexPath.row] title];
         if (![self.userDefaults boolForKey:@"head_image_preference"]) {
-            if ([self.authorImages objectForKey:[self getAuthorForIndexPath:indexPath]]) {
-                UIImage *image = [self.authorImages objectForKey:[self getAuthorForIndexPath:indexPath]];
+            if ([self.authorImages objectForKey:author]) {
+                UIImage *image = [self.authorImages objectForKey:author];
                 cell.imageView.image = [image imageWithRoundedCornersRadius:5];
             } else cell.imageView.image = [UIImage imageNamed:@"loading.png"];
             cell.tag = indexPath.row;
         }
         
-        cell.textLabel.text = [self getTitleForIndexPath:indexPath];
+        cell.textLabel.text = title;
         cell.textLabel.font = [UIFont systemFontOfSize:16];
         
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@%@",[self getAuthorForIndexPath:indexPath],@""];
+        cell.detailTextLabel.text = author;
         cell.detailTextLabel.font = [UIFont boldSystemFontOfSize:12];
         cell.detailTextLabel.textColor = [self getColorForIndexPath:indexPath];
     }
@@ -289,16 +299,6 @@
 }
 
 #pragma mark Accessory methods
-
-- (NSString *)getTitleForIndexPath:(NSIndexPath *)indexPath
-{
-    return [[self.allTopics[indexPath.section] objectAtIndex:indexPath.row] title];
-}
-
-- (NSString *)getAuthorForIndexPath:(NSIndexPath *)indexPath
-{
-    return [[self.allTopics[indexPath.section] objectAtIndex:indexPath.row] author];
-}
 
 - (UIColor *)getColorForIndexPath:(NSIndexPath *)indexPath
 {

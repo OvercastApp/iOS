@@ -15,7 +15,7 @@
 - (void)refreshPostsWithURL:(NSURL *)urlString
 {
     NSLog(@"Refreshing Posts with URL %@", urlString);
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://ocnapp.maxsa.li/postparser.php?link=%@",urlString]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://ocnapp.maxsa.li/postparser2.php?link=%@",urlString]];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
@@ -37,17 +37,14 @@
 {
     self.parsedContents = [XMLReader dictionaryForXMLData:webData];
     self.posts = [[NSMutableArray alloc] init];
-    for (NSDictionary *post in [self.parsedContents valueForKeyPath:@"topic.post"]) {
-        NSString *author = [NSString stringWithFormat:@"%@",[post valueForKeyPath:@"author.text"]];
-        NSString *rank = [NSString stringWithFormat:@"%@",[post valueForKeyPath:@"author.rank"]];
-        NSString *lastPosted = [[[NSString stringWithFormat:@"%@",[post valueForKeyPath:@"status.text"]] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@" "];
-        NSString *content = [NSString stringWithFormat:@"%@",[post valueForKeyPath:@"content.text"]];
-        content = [self removeParsingErrors:content];
-        Post *newPost = [Post postWithAuthor:author
-                                        rank:rank
-                                  lastPosted:lastPosted
-                                     content:content];
-        [self.posts addObject:newPost];
+    id posts = [self.parsedContents valueForKeyPath:@"topic.post"];
+    if ([posts respondsToSelector:@selector(objectForKey:)]) {
+        [self newPost:(NSDictionary *)posts];
+    }
+    else if ([posts respondsToSelector:@selector(objectAtIndex:)]) {
+        for (NSDictionary *post in (NSArray *)posts) {
+            [self newPost:post];
+        }
     }
     self.lastPage = [[self.parsedContents valueForKeyPath:@"topic.lastpage.text"] intValue];
     if (!self.lastPage) {
@@ -56,23 +53,29 @@
     [self sendRefreshUINotification:self];
 }
 
+- (void)newPost:(NSDictionary *)post
+{
+    NSString *author = [post valueForKeyPath:@"author.text"];
+    NSString *rank = [post valueForKeyPath:@"author.rank"];
+    NSString *lastPosted = [[[post valueForKeyPath:@"status.text"] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@" "];
+    NSString *content = [post valueForKeyPath:@"content.text"];
+    NSString *postID = [post valueForKeyPath:@"id.text"];
+    content = [self removeParsingErrors:content];
+    Post *newPost = [Post postWithAuthor:author
+                                    rank:rank
+                              lastPosted:lastPosted
+                                 content:content
+                                  postID:postID];
+    [self.posts addObject:newPost];
+}
+
 - (NSString *)removeParsingErrors:(NSString *)parsedString
 {
-    NSRange searchRange = NSMakeRange([parsedString length] - 1, 1);
-    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"Â"
-                                                           withString:@""
-                                                              options:0
-                                                                range:searchRange];
-    parsedString = [parsedString stringByReplacingOccurrencesOfString:@" îe2" withString:@""];
-    const char *utf8Chars = [parsedString cStringUsingEncoding:NSISOLatin1StringEncoding];
-    NSString *utf8String = [[NSString alloc] initWithCString:utf8Chars encoding:NSUTF8StringEncoding];
+    NSString *utf8String = [parsedString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSString *heading = @"<font face='Helvetica' size='2'>";
     parsedString = [NSString stringWithFormat:@"%@<p>%@</p>",heading,utf8String];
-    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"((" withString:@"<"];
-    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"))" withString:@">"];
     parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<br/>" withString:@"<br>"];
     parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<img" withString:@"<img width=\"100%\""];
-    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<(" withString:@"(<"];
     return parsedString;
 }
 

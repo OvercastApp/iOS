@@ -10,7 +10,7 @@
 
 @property (nonatomic,strong) NSString *subForum;
 @property (nonatomic,strong) NSString *title;
-@property (nonatomic,strong) NSURL *topicURL;
+@property (nonatomic,strong) NSString *topicURL;
 @property (nonatomic,strong) NSString *author;
 @property (nonatomic,strong) NSString *rank;
 @property (nonatomic,strong) NSDate *lastUpdated;
