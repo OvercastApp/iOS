@@ -12,9 +12,9 @@
 
 @implementation TopicParser
 
-- (void)refreshTopicsWithURL:(NSString *)urlString
++ (void)refreshTopicsWithURL:(NSString *)urlString delegate:(id <TopicParserDelegate>)delegate
 {
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://ocnapp.maxsa.li/topicparser.php?link=%@",urlString]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@topicparser.php?link=%@",SOURCE,urlString]];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
@@ -24,9 +24,9 @@
                                                         dispatch_async(dispatch_get_main_queue(), ^{
                                                             if (error) {
                                                                 NSLog(@"Retrieving forum source failed with error: \n%@", error);
-                                                                [self sendRefreshUINotification:self];
-                                                                [Alerts sendConnectionFaliureAlert];
-                                                            } else [self parseData:xmlData];
+                                                                [delegate receivedTopics:nil];
+                                                                [Alerts sendConnectionFailureAlert];
+                                                            } else [self parseData:xmlData delegate:delegate];
                                                         });
                                                     }];
     [task resume];
@@ -34,11 +34,11 @@
 
 #pragma mark XML Parser
 
-- (void)parseData:(NSData *)webData
++ (void)parseData:(NSData *)webData delegate:(id <TopicParserDelegate>)delegate
 {
-    self.parsedContents = [XMLReader dictionaryForXMLData:webData];
-    self.topics = [[NSMutableArray alloc] init];
-    for (NSDictionary *topic in [self.parsedContents valueForKeyPath:@"topics.topic"]) {
+    NSDictionary *parsedContents = [XMLReader dictionaryForXMLData:webData];
+    NSMutableArray *topics = [[NSMutableArray alloc] init];
+    for (NSDictionary *topic in [parsedContents valueForKeyPath:@"topics.topic"]) {
         Topic *newTopic = [[Topic alloc] init];
         
         newTopic.title = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"name.text"]];
@@ -47,12 +47,12 @@
         newTopic.author = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"author.text"]];
         newTopic.rank = [NSString stringWithFormat:@"%@",[topic valueForKeyPath:@"author.rank"]];
         newTopic.lastUpdated = nil;
-        [self.topics addObject:newTopic];
+        [topics addObject:newTopic];
     }
-    [self sendRefreshUINotification:self];
+    [delegate receivedTopics:topics];
 }
 
-- (NSString *)removeParsingErrors:(NSString *)parsedString
++ (NSString *)removeParsingErrors:(NSString *)parsedString
 {
     NSRange searchRange = NSMakeRange([parsedString length] - 1, 1);
     parsedString = [parsedString stringByReplacingOccurrencesOfString:@"Â"

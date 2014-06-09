@@ -13,7 +13,7 @@
 + (NSURLRequest *)requestWithType:(NSString *)type request:(NSString *)request withURL:(NSURL *)URL headers:(NSArray *)headers identifier:(NSString *)identifier
 {
     NSData *requestData = [request dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
-    NSString *requestLength = [NSString stringWithFormat:@"%d",[requestData length]];
+    NSString *requestLength = [NSString stringWithFormat:@"%lu",(unsigned long)[requestData length]];
     NSURL *requestURL = URL;
     NSMutableURLRequest *URLRequest = [[NSMutableURLRequest alloc] init];
     
@@ -24,8 +24,8 @@
     
     //Headers
     for (NSDictionary *header in headers) {
-        [URLRequest setValue:[header objectForKey:@"Value"]
-          forHTTPHeaderField:[header objectForKey:@"HTTPHeaderField"]];
+        [URLRequest setValue:header[@"Value"]
+          forHTTPHeaderField:header[@"HTTPHeaderField"]];
     }
     [URLRequest setValue:requestLength
       forHTTPHeaderField:@"Content-Length"];

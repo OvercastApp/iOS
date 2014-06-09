@@ -69,8 +69,7 @@
 
 + (void)newReplyToPost:(NSString *)postID WithContent:(NSString *)content URL:(NSString *)url cookie:(NSString *)cookie sender:(id)sender
 {
-    NSString *convertedContent = [[content componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@"<br>"];
-    NSString *replyPOST = [NSString stringWithFormat:@"utf8=✓&post[text]=%@&post[reply_to_id]=%@&_wysihtml5_mode=1&commit=Reply",[convertedContent stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],postID];
+    NSString *replyPOST = [NSString stringWithFormat:@"utf8=✓&post[text]=%@&post[reply_to_id]=%@&_wysihtml5_mode=1&commit=Reply",[content stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],postID];
     NSURL *replyPOSTURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/posts",url]];
     NSArray *headers = @[@{@"HTTPHeaderField": @"Referer",
                            @"Value": [NSString stringWithFormat:@"%@/posts/new?reply_to_id=%@",url,postID]},

@@ -9,11 +9,16 @@
 #import <Foundation/Foundation.h>
 #import "Topic.h"
 
+@protocol TopicParserDelegate <NSObject>
+
+- (void)receivedTopics:(NSMutableArray *)topics;
+
+@end
+
 @interface TopicParser : NSObject
 
-@property (nonatomic,strong) NSDictionary *parsedContents;
-@property (nonatomic,strong) NSMutableArray *topics;
+@property (nonatomic,strong) id <TopicParserDelegate> delegate;
 
-- (void)refreshTopicsWithURL:(NSString *)urlString;
++ (void)refreshTopicsWithURL:(NSString *)urlString delegate:(id <TopicParserDelegate>)delegate;
 
 @end

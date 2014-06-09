@@ -9,15 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "TopicParser.h"
 #import "PostParser.h"
+#import "OCNAuthorImages.h"
+#import "OCNPostViewController.h"
 
-#define MAXSALI_AVATAR @"http://ocnapp.maxsa.li/avatar.php?name=%@&size=48"
-#define OCN_AVATAR @"https://avatar.oc.tc/%@/48.png"
-
-@interface OCNTopicViewController : UITableViewController <UISplitViewControllerDelegate, UIWebViewDelegate, UIActionSheetDelegate>
+@interface OCNTopicViewController : UITableViewController <UISplitViewControllerDelegate, UIWebViewDelegate, UIActionSheetDelegate, AuthorImagesDelegate, PostParserDelegate>
 
 @property (nonatomic,strong) Topic *topic;
 @property (nonatomic,strong) UIPopoverController *masterPopoverController;
-@property (nonatomic,strong) NSMutableDictionary *authorImages;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *reverseButton;
 
 @property (nonatomic) int lastPage;

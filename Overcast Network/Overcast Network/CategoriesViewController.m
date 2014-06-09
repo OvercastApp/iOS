@@ -52,7 +52,7 @@
     if (section == 0) {
         return 1;
     }
-    return [[[self.parsedContents objectAtIndex:section] objectForKey:@"subforum"] count];
+    return [(self.parsedContents)[section][@"subforum"] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -64,8 +64,8 @@
     if (indexPath.section == 0 && indexPath.row == 0) {
         cell.textLabel.text = @"What's New";
     } else {
-        NSDictionary *sectionData = [self.parsedContents objectAtIndex:indexPath.section];
-        cell.textLabel.text = [[[sectionData valueForKey:@"subforum"] objectAtIndex:indexPath.row] valueForKey:@"text"];
+        NSDictionary *sectionData = (self.parsedContents)[indexPath.section];
+        cell.textLabel.text = [[sectionData valueForKey:@"subforum"][indexPath.row] valueForKey:@"text"];
     }
     
     // Checkmark
@@ -82,7 +82,7 @@
     if (section == 0) {
         return nil;
     }
-    return [[self.parsedContents objectAtIndex:section] valueForKey:@"name"];
+    return [(self.parsedContents)[section] valueForKey:@"name"];
 }
 
 #pragma mark - Table view delegate
@@ -91,15 +91,15 @@
 {
     if (indexPath.section == 0 && indexPath.row == 0) {
         self.currentForum.title = @"What's New";
-        self.currentForum.url = [NSURL URLWithString:@"https://oc.tc/forums"];
+        self.currentForum.url = @"https://oc.tc/forums";
     }
     else {
-        NSDictionary *sectionData = [self.parsedContents objectAtIndex:indexPath.section];
-        self.currentForum.title = [[[sectionData valueForKey:@"subforum"] objectAtIndex:indexPath.row] valueForKey:@"text"];
-        self.currentForum.url = [[[sectionData valueForKey:@"subforum"] objectAtIndex:indexPath.row] valueForKey:@"link"];
+        NSDictionary *sectionData = (self.parsedContents)[indexPath.section];
+        self.currentForum.title = [[sectionData valueForKey:@"subforum"][indexPath.row] valueForKey:@"text"];
+        self.currentForum.url = [[sectionData valueForKey:@"subforum"][indexPath.row] valueForKey:@"link"];
     }
     if (!(indexPath.row == self.currentForum.index.row && indexPath.section == self.currentForum.index.section)) {
-        NSArray *rowsToReload = [[NSArray alloc] initWithObjects:indexPath,self.currentForum.index,nil];
+        NSArray *rowsToReload = @[indexPath,self.currentForum.index];
         [self.tableView reloadRowsAtIndexPaths:rowsToReload withRowAnimation:UITableViewRowAnimationAutomatic];
     }
     self.currentForum.index = indexPath;

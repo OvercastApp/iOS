@@ -12,9 +12,9 @@
 
 @implementation ForumParser
 
-- (void)refreshForums
++ (void)refreshForumsWithDelegate:(id<ForumParserDelegate>)delegate
 {
-    NSURL *url = [NSURL URLWithString:@"http://ocnapp.maxsa.li/forumparser.php?link=https://oc.tc/forums"];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@forumparser.php?link=https://oc.tc/forums",SOURCE]];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
@@ -24,23 +24,16 @@
                                                         dispatch_async(dispatch_get_main_queue(), ^{
                                                             if (error) {
                                                                 NSLog(@"Retrieving forum source failed with error: \n%@", error);
-                                                                [self sendRefreshUINotification:self];
-                                                            } else [self parseData:xmlData];
+                                                                [delegate receivedForumsContents:nil];
+                                                            } else [self parseData:xmlData delegate:delegate];
                                                         });
                                                     }];
     [task resume];
 }
 
-- (void)parseData:(NSData *)webData
++ (void)parseData:(NSData *)webData delegate:(id<ForumParserDelegate>)delegate
 {
-    self.parsedContents = [[XMLReader dictionaryForXMLData:webData] valueForKeyPath:@"subforums.subforumtitle"];
-    [self sendRefreshUINotification:self];
-}
-
-- (void)sendRefreshUINotification:(id)sender
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateForums"
-                                                        object:sender];
+    [delegate receivedForumsContents:[[XMLReader dictionaryForXMLData:webData] valueForKeyPath:@"subforums.subforumtitle"]];
 }
 
 @end

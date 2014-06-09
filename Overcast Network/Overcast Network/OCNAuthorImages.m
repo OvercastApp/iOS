@@ -8,19 +8,26 @@
 
 #import "OCNAuthorImages.h"
 
-#define MAXSALI_AVATAR @"http://ocnapp.maxsa.li/avatar.php?name=%@&size=48"
 #define OCN_AVATAR @"https://avatar.oc.tc/%@/48.png"
 
 @implementation OCNAuthorImages
 
-- (void)getImageFromAuthor:(NSString *)author source:(int)source pathToReload:(NSIndexPath *)indexPath sender:(id)sender
+- (NSMutableDictionary *)authorImages
+{
+    if (!_authorImages) {
+        _authorImages = [[NSMutableDictionary alloc] init];
+    }
+    return _authorImages;
+}
+
+- (void)getImageForAuthor:(NSString *)author source:(int)source
 {
     dispatch_queue_t imageQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
     dispatch_async(imageQueue, ^(void) {
         NSString *sourceURL = [[NSString alloc] init];
         switch (source) {
             case 0:
-                sourceURL = [NSString stringWithFormat:MAXSALI_AVATAR,author];
+                sourceURL = [NSString stringWithFormat:@"%@avatar.php?name=%@&size=48",SOURCE,author];
                 break;
                 
             case 1:
@@ -29,22 +36,42 @@
         }
         NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:sourceURL]];
         UIImage* image = [[UIImage alloc] initWithData:imageData];
-        /* Broken code
         if (image) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [sender.authorImages setObject:image
-                                      forKey:author];
-                if (!sender.refreshing) {
-                    NSIndexPath *rowToReload = [NSIndexPath indexPathForRow:index
-                                                                  inSection:section];
-                    NSArray *rowsToReload = [[NSArray alloc] initWithObjects:rowToReload, nil];
-                    [sender.tableView reloadRowsAtIndexPaths:rowsToReload
-                                          withRowAnimation:UITableViewRowAnimationAutomatic];
-                }
+                (self.authorImages)[author] = image;
+                [self.delegate imageFinishedLoadingForAuthor:author];
             });
         }
-         */
     });
+}
+
+- (id)initSingleton
+{
+    if ((self = [super init]))
+    {
+        // Initialization code here.
+    }
+
+    return self;
+}
+
+// Persistent instance.
+static OCNAuthorImages *_default = nil;
+
++ (OCNAuthorImages *)instance
+{
+    
+    // Small optimization to avoid wasting time after the singleton being initialized.
+    if (_default != nil)
+    {
+        return _default;
+    }
+    static dispatch_once_t safer;
+    dispatch_once(&safer, ^(void)
+                  {
+                      _default = [[OCNAuthorImages alloc] initSingleton];
+                  });
+    return _default;
 }
 
 @end

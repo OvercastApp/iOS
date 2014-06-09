@@ -8,6 +8,7 @@
 
 #import "OCNReplyViewController.h"
 #import "OCNHTTPRequest.h"
+#import "Alerts.h"
 
 @interface OCNReplyViewController ()
 
@@ -81,6 +82,18 @@
 }
 
 - (IBAction)sendReply:(id)sender {
+    [self getCookies];
+    self.replyButton.enabled = NO;
+    self.cancelButton.enabled = NO;
+    [self.content endEditing:YES];
+    if (self.replyToID)
+        [self reply];
+    else
+        [self post];
+}
+
+- (void)getCookies
+{
     NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
     NSString *cookies = @"";
     for (NSHTTPCookie *each in [cookieStorage cookiesForURL:[NSURL URLWithString:@"https://oc.tc"]]) {
@@ -91,11 +104,6 @@
     }
     cookies = [cookies stringByAppendingString:@" __utma=40309308.64665819.1397484934.1397484934.1397484934.1; __utmb=40309308.24.10.1397484934; __utmc=40309308; __utmz=40309308.1397484934.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)"];
     self.loginCookie = cookies;
-    
-    self.replyButton.enabled = NO;
-    self.cancelButton.enabled = NO;
-    if (self.replyToID) [self reply];
-    else [self post];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
@@ -103,19 +111,32 @@
     if ([[connection originalRequest].identifier isEqualToString:@"Post"]) {
         NSLog(@"Posted!");
         [self performSegueWithIdentifier:@"Replied Unwind" sender:self];
+        [self dismissViewControllerAnimated:YES
+                                 completion:nil];
         return;
     }
     if ([[connection originalRequest].identifier isEqualToString:@"Reply"]) {
         NSLog(@"Replied!");
         [self performSegueWithIdentifier:@"Replied Unwind" sender:self];
+        [self dismissViewControllerAnimated:YES
+                                 completion:nil];
         return;
     }
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+    [Alerts sendConnectionFailureAlert];
+    NSLog(@"Posting failed with error: \n%@", error);
+    
+    self.replyButton.enabled = YES;
+    self.cancelButton.enabled = YES;
 }
 
 - (void)reply
 {
     [OCNHTTPRequest newReplyToPost:self.replyToID
-                       WithContent:self.content.text
+                       WithContent:[[self.content.text componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@"<br>"]
                                URL:self.postURL
                             cookie:self.loginCookie
                             sender:self];
@@ -123,7 +144,7 @@
 
 - (void)post
 {
-    [OCNHTTPRequest newPostWithContent:self.content.text
+    [OCNHTTPRequest newPostWithContent:[[self.content.text componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@"<br>"]
                                    URL:self.postURL
                                 cookie:self.loginCookie
                                 sender:self];

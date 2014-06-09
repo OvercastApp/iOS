@@ -8,8 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol AuthorImagesDelegate <NSObject>
+
+- (void)imageFinishedLoadingForAuthor:(NSString *)author;
+
+@end
+
 @interface OCNAuthorImages : NSObject
 
-- (void)getImageFromAuthor:(NSString *)author source:(int)source pathToReload:(NSIndexPath *)indexPath sender:(id)sender;
+@property (nonatomic, weak) id <AuthorImagesDelegate> delegate;
+@property (nonatomic,strong) NSMutableDictionary *authorImages;
+
+- (void)getImageForAuthor:(NSString *)author source:(int)source;
+
++ (OCNAuthorImages *)instance;
 
 @end

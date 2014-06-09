@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "Post.h"
+#import "OCNAuthorImages.h"
+#import "UIColor+OCNRanks.h"
 
 @interface OCNPostViewController : UIViewController <UIActionSheetDelegate>
 
 @property (nonatomic,strong) Post *post;
 @property (nonatomic,strong) NSString *topicURL;
-@property (nonatomic,strong) NSMutableDictionary *authorImages;
 
 - (IBAction)sharePost:(id)sender;
 

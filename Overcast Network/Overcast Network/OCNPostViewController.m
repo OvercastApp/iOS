@@ -8,7 +8,7 @@
 
 #import "OCNPostViewController.h"
 #import "OCNReplyViewController.h"
-#import "UIImage+RoundedCorner.h"
+#import "UIImage+Extras.h"
 #import "OCNPostWebView.h"
 
 @interface OCNPostViewController ()
@@ -34,8 +34,9 @@
     UILabel *author = (UILabel *)[self.view viewWithTag:2];
     UILabel *lastPosted = (UILabel *)[self.view viewWithTag:3];
     OCNPostWebView *contentWebView = (OCNPostWebView *)[self.view viewWithTag:4];
-    authorImage.image = [[self.authorImages objectForKey:self.post.author] imageWithRoundedCornersRadius:5];
+    authorImage.image = [([OCNAuthorImages instance].authorImages)[self.post.author] imageWithRoundedCornersRadius:5];
     author.text = self.post.author;
+    author.textColor = [UIColor colorForRank:self.post.rank];
     lastPosted.text = self.post.lastPosted;
     [contentWebView loadHTMLString:self.post.content baseURL:nil];
 }
@@ -69,7 +70,6 @@
     [[UIApplication sharedApplication] openURL:url];
 }
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     // Get the new view controller using [segue destinationViewController].

@@ -10,9 +10,9 @@
 
 @implementation Alerts
 
-+ (void)sendConnectionFaliureAlert
++ (void)sendConnectionFailureAlert
 {
-    UIAlertView *failedAlert = [[UIAlertView alloc] initWithTitle:@"Cannot Refresh Content"
+    UIAlertView *failedAlert = [[UIAlertView alloc] initWithTitle:@"Cannot Connect :-("
                                                           message:@"Check your internet connection please :D"
                                                          delegate:nil
                                                 cancelButtonTitle:nil

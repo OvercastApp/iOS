@@ -47,7 +47,7 @@ NSString *const kXMLReaderTextNodeKey = @"text";
     // Return the stack’s root dictionary on success
     if (success)
     {
-        NSDictionary *resultDict = [dictionaryStack objectAtIndex:0];
+        NSDictionary *resultDict = dictionaryStack[0];
         return resultDict;
     }
     return nil;
@@ -65,7 +65,7 @@ NSString *const kXMLReaderTextNodeKey = @"text";
     [childDict addEntriesFromDictionary:attributeDict];
     
     // If there’s already an item for this key, it means we need to create an array
-    id existingValue = [parentDict objectForKey:elementName];
+    id existingValue = parentDict[elementName];
     if (existingValue) {
         NSMutableArray *array = nil;
         if ([existingValue isKindOfClass:[NSMutableArray class]]) {
@@ -77,13 +77,13 @@ NSString *const kXMLReaderTextNodeKey = @"text";
             [array addObject:existingValue];
             
             // Replace the child dictionary with an array of children dictionaries
-            [parentDict setObject:array forKey:elementName];
+            parentDict[elementName] = array;
         }
         // Add the new child dictionary to the array
         [array addObject:childDict];
     } else {
         // No existing value, so update the dictionary
-        [parentDict setObject:childDict forKey:elementName];
+        parentDict[elementName] = childDict;
     }
     // Update the stack
     [dictionaryStack addObject:childDict];
@@ -98,7 +98,7 @@ NSString *const kXMLReaderTextNodeKey = @"text";
     if ([textInProgress length] > 0)
     {
         // Get rid of leading + trailing whitespace
-        [dictInProgress setObject:[textInProgress stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] forKey:kXMLReaderTextNodeKey];
+        dictInProgress[kXMLReaderTextNodeKey] = [textInProgress stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         
         // Reset the text
         textInProgress = [[NSMutableString alloc] init];

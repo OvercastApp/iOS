@@ -13,8 +13,6 @@
 		5F06EFAB1876655200D2C1B4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5F06EFA91876655200D2C1B4 /* InfoPlist.strings */; };
 		5F06EFAD1876655200D2C1B4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F06EFAC1876655200D2C1B4 /* main.m */; };
 		5F06EFB11876655200D2C1B4 /* OCNAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F06EFB01876655200D2C1B4 /* OCNAppDelegate.m */; };
-		5F06EFB41876655200D2C1B4 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5F06EFB21876655200D2C1B4 /* Main_iPhone.storyboard */; };
-		5F06EFB71876655200D2C1B4 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5F06EFB51876655200D2C1B4 /* Main_iPad.storyboard */; };
 		5F06EFBC1876655200D2C1B4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F06EFBB1876655200D2C1B4 /* Images.xcassets */; };
 		5F06EFC31876655200D2C1B4 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F06EFC21876655200D2C1B4 /* XCTest.framework */; };
 		5F06EFC41876655200D2C1B4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F06EFA01876655200D2C1B4 /* Foundation.framework */; };
@@ -40,14 +38,17 @@
 		5F3EA91718E5418500900351 /* Alerts.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA91618E5418500900351 /* Alerts.m */; };
 		5F3EA91A18E5A88500900351 /* OCNLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA91918E5A88500900351 /* OCNLoginViewController.m */; };
 		5F3EA96218E6DEBA00900351 /* NSMutableArray+ReverseArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3EA96118E6DEBA00900351 /* NSMutableArray+ReverseArray.m */; };
-		5F3EA96418E7E8F300900351 /* appicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F3EA96318E7E8F300900351 /* appicon.png */; };
 		5F5D01C418D1F74900727B7A /* OCNServersPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5D01C318D1F74900727B7A /* OCNServersPageViewController.m */; };
+		5F6863D9190EABAC000BA7B3 /* appicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F6863D8190EABAC000BA7B3 /* appicon.png */; };
+		5F68642319112023000BA7B3 /* Steve.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F68642219112023000BA7B3 /* Steve.png */; };
+		5F68642619112375000BA7B3 /* UIImage+Extras.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F68642519112375000BA7B3 /* UIImage+Extras.m */; };
+		5F6864291914C82F000BA7B3 /* UIColor+OCNRanks.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6864281914C82F000BA7B3 /* UIColor+OCNRanks.m */; };
 		5FA1280F18811D3B00EAEDE0 /* TopicParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1280E18811D3B00EAEDE0 /* TopicParser.m */; };
 		5FA128181881204A00EAEDE0 /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA128171881204A00EAEDE0 /* XMLReader.m */; };
 		5FA1282718818A9300EAEDE0 /* CategoriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1282618818A9300EAEDE0 /* CategoriesViewController.m */; };
 		5FA1282A18818E9000EAEDE0 /* ForumParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1282918818E9000EAEDE0 /* ForumParser.m */; };
 		5FA1283218823C9C00EAEDE0 /* Forum.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1283118823C9C00EAEDE0 /* Forum.m */; };
-		5FA24E73187C27D4002D83E5 /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA24E72187C27D4002D83E5 /* UIImage+RoundedCorner.m */; };
+		5FDBDD4B1943A1FD00C53C10 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FDBDD4A1943A1FD00C53C10 /* Main.storyboard */; };
 		5FF7216E187ECF370099271B /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FF7216D187ECF370099271B /* ProfileViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -72,8 +73,6 @@
 		5F06EFAE1876655200D2C1B4 /* Overcast Network-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Overcast Network-Prefix.pch"; sourceTree = "<group>"; };
 		5F06EFAF1876655200D2C1B4 /* OCNAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCNAppDelegate.h; sourceTree = "<group>"; };
 		5F06EFB01876655200D2C1B4 /* OCNAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OCNAppDelegate.m; sourceTree = "<group>"; };
-		5F06EFB31876655200D2C1B4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
-		5F06EFB61876655200D2C1B4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
 		5F06EFBB1876655200D2C1B4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5F06EFC11876655200D2C1B4 /* Overcast NetworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Overcast NetworkTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F06EFC21876655200D2C1B4 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -116,9 +115,14 @@
 		5F3EA91918E5A88500900351 /* OCNLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCNLoginViewController.m; sourceTree = "<group>"; };
 		5F3EA96018E6DEBA00900351 /* NSMutableArray+ReverseArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+ReverseArray.h"; sourceTree = "<group>"; };
 		5F3EA96118E6DEBA00900351 /* NSMutableArray+ReverseArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+ReverseArray.m"; sourceTree = "<group>"; };
-		5F3EA96318E7E8F300900351 /* appicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = appicon.png; path = ../appicon.png; sourceTree = "<group>"; };
 		5F5D01C218D1F74900727B7A /* OCNServersPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCNServersPageViewController.h; sourceTree = "<group>"; };
 		5F5D01C318D1F74900727B7A /* OCNServersPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCNServersPageViewController.m; sourceTree = "<group>"; };
+		5F6863D8190EABAC000BA7B3 /* appicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appicon.png; sourceTree = "<group>"; };
+		5F68642219112023000BA7B3 /* Steve.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Steve.png; sourceTree = "<group>"; };
+		5F68642419112375000BA7B3 /* UIImage+Extras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Extras.h"; sourceTree = "<group>"; };
+		5F68642519112375000BA7B3 /* UIImage+Extras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Extras.m"; sourceTree = "<group>"; };
+		5F6864271914C82F000BA7B3 /* UIColor+OCNRanks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+OCNRanks.h"; sourceTree = "<group>"; };
+		5F6864281914C82F000BA7B3 /* UIColor+OCNRanks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+OCNRanks.m"; sourceTree = "<group>"; };
 		5FA1280D18811D3B00EAEDE0 /* TopicParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopicParser.h; sourceTree = "<group>"; };
 		5FA1280E18811D3B00EAEDE0 /* TopicParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TopicParser.m; sourceTree = "<group>"; };
 		5FA128161881204A00EAEDE0 /* XMLReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLReader.h; sourceTree = "<group>"; };
@@ -129,8 +133,7 @@
 		5FA1282918818E9000EAEDE0 /* ForumParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ForumParser.m; sourceTree = "<group>"; };
 		5FA1283018823C9C00EAEDE0 /* Forum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Forum.h; sourceTree = "<group>"; };
 		5FA1283118823C9C00EAEDE0 /* Forum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Forum.m; sourceTree = "<group>"; };
-		5FA24E71187C27D4002D83E5 /* UIImage+RoundedCorner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+RoundedCorner.h"; sourceTree = "<group>"; };
-		5FA24E72187C27D4002D83E5 /* UIImage+RoundedCorner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+RoundedCorner.m"; sourceTree = "<group>"; };
+		5FDBDD4A1943A1FD00C53C10 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		5FF7216C187ECF370099271B /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewController.h; sourceTree = "<group>"; };
 		5FF7216D187ECF370099271B /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -195,13 +198,12 @@
 			children = (
 				5F06EFAF1876655200D2C1B4 /* OCNAppDelegate.h */,
 				5F06EFB01876655200D2C1B4 /* OCNAppDelegate.m */,
-				5F06EFB21876655200D2C1B4 /* Main_iPhone.storyboard */,
-				5F06EFB51876655200D2C1B4 /* Main_iPad.storyboard */,
+				5FDBDD4A1943A1FD00C53C10 /* Main.storyboard */,
 				5F06EFE41876A13400D2C1B4 /* Forums */,
 				5FF7216F187ECF530099271B /* Profile */,
 				5F5D01C518D1F75500727B7A /* Servers */,
 				5F06EFBB1876655200D2C1B4 /* Images.xcassets */,
-				5F3EA96318E7E8F300900351 /* appicon.png */,
+				5F6863D8190EABAC000BA7B3 /* appicon.png */,
 				5F06EFA71876655200D2C1B4 /* Supporting Files */,
 			);
 			path = "Overcast Network";
@@ -239,32 +241,28 @@
 		5F06EFE41876A13400D2C1B4 /* Forums */ = {
 			isa = PBXGroup;
 			children = (
-				5F3EA91818E5A88500900351 /* OCNLoginViewController.h */,
-				5F3EA91918E5A88500900351 /* OCNLoginViewController.m */,
-				5F3EA91B18E5A8B100900351 /* Model */,
+				5FA1282518818A9300EAEDE0 /* CategoriesViewController.h */,
+				5FA1282618818A9300EAEDE0 /* CategoriesViewController.m */,
+				5FA1282E18818F5D00EAEDE0 /* Forums */,
 				5F06EFDB1876663A00D2C1B4 /* OCNForumsViewController.h */,
 				5F06EFDC1876663A00D2C1B4 /* OCNForumsViewController.m */,
-				5F2DC5841902B42900EF34E0 /* OCNAuthorImages.h */,
-				5F2DC5851902B42900EF34E0 /* OCNAuthorImages.m */,
-				5F06EFE81876AA1E00D2C1B4 /* Model */,
+				5F06EFE81876AA1E00D2C1B4 /* Topics */,
 				5F3EA86B18E1AE2600900351 /* OCNTopicViewController.h */,
 				5F3EA86C18E1AE2600900351 /* OCNTopicViewController.m */,
-				5F2F194F1887D902007A1F78 /* Model */,
-				5F3EA91018E3B66E00900351 /* View */,
+				5F2F194F1887D902007A1F78 /* Posts */,
 				5F2DC57E1901373900EF34E0 /* OCNPostViewController.h */,
 				5F2DC57F1901373900EF34E0 /* OCNPostViewController.m */,
 				5F2DC56E18FFFC6100EF34E0 /* OCNReplyViewController.h */,
 				5F2DC56F18FFFC6100EF34E0 /* OCNReplyViewController.m */,
-				5F2DC57D19000DEE00EF34E0 /* Model */,
-				5FA1282518818A9300EAEDE0 /* CategoriesViewController.h */,
-				5FA1282618818A9300EAEDE0 /* CategoriesViewController.m */,
-				5FA1282E18818F5D00EAEDE0 /* Model */,
+				5F3EA91818E5A88500900351 /* OCNLoginViewController.h */,
+				5F3EA91918E5A88500900351 /* OCNLoginViewController.m */,
+				5F2DC57D19000DEE00EF34E0 /* Login + POSTing */,
 				5FA1282F18818F8B00EAEDE0 /* Shared Classes */,
 			);
 			name = Forums;
 			sourceTree = "<group>";
 		};
-		5F06EFE81876AA1E00D2C1B4 /* Model */ = {
+		5F06EFE81876AA1E00D2C1B4 /* Topics */ = {
 			isa = PBXGroup;
 			children = (
 				5FA1280D18811D3B00EAEDE0 /* TopicParser.h */,
@@ -272,10 +270,10 @@
 				5F3EA87118E1B37B00900351 /* Topic.h */,
 				5F3EA87218E1B37B00900351 /* Topic.m */,
 			);
-			name = Model;
+			name = Topics;
 			sourceTree = "<group>";
 		};
-		5F2DC57D19000DEE00EF34E0 /* Model */ = {
+		5F2DC57D19000DEE00EF34E0 /* Login + POSTing */ = {
 			isa = PBXGroup;
 			children = (
 				5F2DC57719000DE600EF34E0 /* ViewController.h */,
@@ -287,10 +285,10 @@
 				5F2DC57319000DE600EF34E0 /* NSURLRequest+Identifier.h */,
 				5F2DC57419000DE600EF34E0 /* NSURLRequest+Identifier.m */,
 			);
-			name = Model;
+			name = "Login + POSTing";
 			sourceTree = "<group>";
 		};
-		5F2F194F1887D902007A1F78 /* Model */ = {
+		5F2F194F1887D902007A1F78 /* Posts */ = {
 			isa = PBXGroup;
 			children = (
 				5F3EA86E18E1B34300900351 /* PostParser.h */,
@@ -299,24 +297,10 @@
 				5F3EA87518E1B68900900351 /* Post.m */,
 				5F2DC58119013B4700EF34E0 /* UIWebView+CheckHeight.h */,
 				5F2DC58219013B4700EF34E0 /* UIWebView+CheckHeight.m */,
-			);
-			name = Model;
-			sourceTree = "<group>";
-		};
-		5F3EA91018E3B66E00900351 /* View */ = {
-			isa = PBXGroup;
-			children = (
 				5F3EA90D18E3B66100900351 /* OCNPostWebView.h */,
 				5F3EA90E18E3B66100900351 /* OCNPostWebView.m */,
 			);
-			name = View;
-			sourceTree = "<group>";
-		};
-		5F3EA91B18E5A8B100900351 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Model;
+			name = Posts;
 			sourceTree = "<group>";
 		};
 		5F5D01C518D1F75500727B7A /* Servers */ = {
@@ -328,7 +312,7 @@
 			name = Servers;
 			sourceTree = "<group>";
 		};
-		5FA1282E18818F5D00EAEDE0 /* Model */ = {
+		5FA1282E18818F5D00EAEDE0 /* Forums */ = {
 			isa = PBXGroup;
 			children = (
 				5FA1282818818E9000EAEDE0 /* ForumParser.h */,
@@ -336,19 +320,24 @@
 				5FA1283018823C9C00EAEDE0 /* Forum.h */,
 				5FA1283118823C9C00EAEDE0 /* Forum.m */,
 			);
-			name = Model;
+			name = Forums;
 			sourceTree = "<group>";
 		};
 		5FA1282F18818F8B00EAEDE0 /* Shared Classes */ = {
 			isa = PBXGroup;
 			children = (
+				5F6864271914C82F000BA7B3 /* UIColor+OCNRanks.h */,
+				5F6864281914C82F000BA7B3 /* UIColor+OCNRanks.m */,
+				5F2DC5841902B42900EF34E0 /* OCNAuthorImages.h */,
+				5F2DC5851902B42900EF34E0 /* OCNAuthorImages.m */,
 				5F3D371C18F7F2D400A2CF00 /* loading.png */,
+				5F68642219112023000BA7B3 /* Steve.png */,
 				5F3EA91518E5418500900351 /* Alerts.h */,
 				5F3EA91618E5418500900351 /* Alerts.m */,
 				5FA128161881204A00EAEDE0 /* XMLReader.h */,
 				5FA128171881204A00EAEDE0 /* XMLReader.m */,
-				5FA24E71187C27D4002D83E5 /* UIImage+RoundedCorner.h */,
-				5FA24E72187C27D4002D83E5 /* UIImage+RoundedCorner.m */,
+				5F68642419112375000BA7B3 /* UIImage+Extras.h */,
+				5F68642519112375000BA7B3 /* UIImage+Extras.m */,
 				5F3EA96018E6DEBA00900351 /* NSMutableArray+ReverseArray.h */,
 				5F3EA96118E6DEBA00900351 /* NSMutableArray+ReverseArray.m */,
 			);
@@ -444,11 +433,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5F06EFB71876655200D2C1B4 /* Main_iPad.storyboard in Resources */,
+				5F6863D9190EABAC000BA7B3 /* appicon.png in Resources */,
 				5F06EFBC1876655200D2C1B4 /* Images.xcassets in Resources */,
+				5F68642319112023000BA7B3 /* Steve.png in Resources */,
 				5F131A60188AC41D00FEF76A /* Settings.bundle in Resources */,
-				5F06EFB41876655200D2C1B4 /* Main_iPhone.storyboard in Resources */,
-				5F3EA96418E7E8F300900351 /* appicon.png in Resources */,
+				5FDBDD4B1943A1FD00C53C10 /* Main.storyboard in Resources */,
 				5F06EFAB1876655200D2C1B4 /* InfoPlist.strings in Resources */,
 				5F3D371D18F7F2D400A2CF00 /* loading.png in Resources */,
 			);
@@ -469,7 +458,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5FA24E73187C27D4002D83E5 /* UIImage+RoundedCorner.m in Sources */,
 				5FF7216E187ECF370099271B /* ProfileViewController.m in Sources */,
 				5F2DC57018FFFC6100EF34E0 /* OCNReplyViewController.m in Sources */,
 				5F3EA87018E1B34300900351 /* PostParser.m in Sources */,
@@ -479,8 +467,10 @@
 				5F2DC57A19000DE600EF34E0 /* NSURLRequest+Identifier.m in Sources */,
 				5F3EA91718E5418500900351 /* Alerts.m in Sources */,
 				5F3EA96218E6DEBA00900351 /* NSMutableArray+ReverseArray.m in Sources */,
+				5F68642619112375000BA7B3 /* UIImage+Extras.m in Sources */,
 				5FA1283218823C9C00EAEDE0 /* Forum.m in Sources */,
 				5FA1280F18811D3B00EAEDE0 /* TopicParser.m in Sources */,
+				5F6864291914C82F000BA7B3 /* UIColor+OCNRanks.m in Sources */,
 				5F2DC5801901373900EF34E0 /* OCNPostViewController.m in Sources */,
 				5F2DC58319013B4700EF34E0 /* UIWebView+CheckHeight.m in Sources */,
 				5F06EFB11876655200D2C1B4 /* OCNAppDelegate.m in Sources */,
@@ -526,22 +516,6 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		5F06EFB21876655200D2C1B4 /* Main_iPhone.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5F06EFB31876655200D2C1B4 /* Base */,
-			);
-			name = Main_iPhone.storyboard;
-			sourceTree = "<group>";
-		};
-		5F06EFB51876655200D2C1B4 /* Main_iPad.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5F06EFB61876655200D2C1B4 /* Base */,
-			);
-			name = Main_iPad.storyboard;
-			sourceTree = "<group>";
-		};
 		5F06EFCB1876655200D2C1B4 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -585,7 +559,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -618,7 +592,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -630,14 +604,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Overcast Network/Overcast Network-Prefix.pch";
 				INFOPLIST_FILE = "Overcast Network/Overcast Network-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_NAME = Overcast;
-				PROVISIONING_PROFILE = "C5B60450-7A43-40AF-85BB-D58DB931D00C";
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -647,14 +622,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Overcast Network/Overcast Network-Prefix.pch";
 				INFOPLIST_FILE = "Overcast Network/Overcast Network-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_NAME = Overcast;
-				PROVISIONING_PROFILE = "C5B60450-7A43-40AF-85BB-D58DB931D00C";
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

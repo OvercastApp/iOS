@@ -9,14 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "ForumParser.h"
 #import "Forum.h"
+#import "OCNAuthorImages.h"
+#import "OCNTopicViewController.h"
 
-@class OCNTopicViewController;
-
-@interface OCNForumsViewController : UITableViewController <UISplitViewControllerDelegate>
+@interface OCNForumsViewController : UITableViewController <UISplitViewControllerDelegate, AuthorImagesDelegate, TopicParserDelegate, ForumParserDelegate>
 
 @property (nonatomic,weak) IBOutlet UIRefreshControl *refreshWheel;
 @property (nonatomic,strong) IBOutlet UIBarButtonItem *categoriesButton;
-@property (nonatomic,strong) NSMutableDictionary *authorImages;
 @property (nonatomic,weak) UIPopoverController *categoriesPopover;
 @property (nonatomic,strong) OCNTopicViewController *topicViewController;
 @property (retain, nonatomic) UIPopoverController *topicPopoverController;

@@ -12,10 +12,10 @@
 
 @implementation PostParser
 
-- (void)refreshPostsWithURL:(NSURL *)urlString
++ (void)refreshPostsWithURL:(NSURL *)urlString delegate:(id<PostParserDelegate>)delegate
 {
     NSLog(@"Refreshing Posts with URL %@", urlString);
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://ocnapp.maxsa.li/postparser2.php?link=%@",urlString]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@postparser2.php?link=%@",SOURCE,urlString]];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
@@ -25,35 +25,38 @@
                                                         dispatch_async(dispatch_get_main_queue(), ^{
                                                             if (error) {
                                                                 NSLog(@"Retrieving posts source failed with error: \n%@", error);
-                                                                [self sendRefreshUINotification:self];
-                                                                [Alerts sendConnectionFaliureAlert];
-                                                            } else [self parseData:xmlData];
+                                                                [delegate receivedPosts:nil
+                                                                               lastPage:0];
+                                                                [Alerts sendConnectionFailureAlert];
+                                                            } else [self parseData:xmlData
+                                                                          delegate:delegate];
                                                         });
                                                     }];
     [task resume];
 }
 
-- (void)parseData:(NSData *)webData
++ (void)parseData:(NSData *)webData delegate:(id<PostParserDelegate>)delegate
 {
-    self.parsedContents = [XMLReader dictionaryForXMLData:webData];
-    self.posts = [[NSMutableArray alloc] init];
-    id posts = [self.parsedContents valueForKeyPath:@"topic.post"];
+    NSDictionary *parsedContents = [XMLReader dictionaryForXMLData:webData];
+    NSMutableArray *forumPosts = [[NSMutableArray alloc] init];
+    id posts = [parsedContents valueForKeyPath:@"topic.post"];
     if ([posts respondsToSelector:@selector(objectForKey:)]) {
         [self newPost:(NSDictionary *)posts];
     }
     else if ([posts respondsToSelector:@selector(objectAtIndex:)]) {
         for (NSDictionary *post in (NSArray *)posts) {
-            [self newPost:post];
+            [forumPosts addObject:[self newPost:post]];
         }
     }
-    self.lastPage = [[self.parsedContents valueForKeyPath:@"topic.lastpage.text"] intValue];
-    if (!self.lastPage) {
-        self.lastPage = 1;
+    int lastPage = [[parsedContents valueForKeyPath:@"topic.lastpage.text"] intValue];
+    if (!lastPage) {
+        lastPage = 1;
     }
-    [self sendRefreshUINotification:self];
+    [delegate receivedPosts:forumPosts
+                   lastPage:lastPage];
 }
 
-- (void)newPost:(NSDictionary *)post
++ (Post *)newPost:(NSDictionary *)post
 {
     NSString *author = [post valueForKeyPath:@"author.text"];
     NSString *rank = [post valueForKeyPath:@"author.rank"];
@@ -66,23 +69,19 @@
                               lastPosted:lastPosted
                                  content:content
                                   postID:postID];
-    [self.posts addObject:newPost];
+    return newPost;
 }
 
-- (NSString *)removeParsingErrors:(NSString *)parsedString
++ (NSString *)removeParsingErrors:(NSString *)parsedString
 {
     NSString *utf8String = [parsedString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSString *heading = @"<font face='Helvetica' size='2'>";
     parsedString = [NSString stringWithFormat:@"%@<p>%@</p>",heading,utf8String];
     parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<br/>" withString:@"<br>"];
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<i/>" withString:@"</i>"];
+    parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<b/>" withString:@"</b>"];
     parsedString = [parsedString stringByReplacingOccurrencesOfString:@"<img" withString:@"<img width=\"100%\""];
     return parsedString;
-}
-
-- (void)sendRefreshUINotification:(id)sender
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdatePosts"
-                                                        object:sender];
 }
 
 @end

@@ -8,10 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol ForumParserDelegate <NSObject>
+
+- (void)receivedForumsContents:(NSArray *)parsedContents;
+
+@end
+
 @interface ForumParser : NSObject
 
-@property (nonatomic,strong) NSArray *parsedContents;
-
-- (void)refreshForums;
++ (void)refreshForumsWithDelegate:(id <ForumParserDelegate>)delegate;
 
 @end

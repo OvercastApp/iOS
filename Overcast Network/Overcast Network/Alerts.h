@@ -10,6 +10,6 @@
 
 @interface Alerts : NSObject
 
-+ (void)sendConnectionFaliureAlert;
++ (void)sendConnectionFailureAlert;
 
 @end
